@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "desc": "The Sensitive Data Protection on AWS solution allows enterprise customers to create data catalogs, discover, protect, and visualize sensitive data across multiple AWS accounts. ",
+    "solutionDo": "What does the solution do",
+    "getStarted": "Get started",
+    "archOfSolution": "Architecture of the solution"
+  },
+  "connect": {
+    "desc": "The first step for using Sensitive Data Protection is to onboard AWS accounts. Once onboarded, you can click into specific AWS account and see its data source (S3, RDS).",
+    "addAWSAccount": "Add AWS account(s)"
+  },
+  "catalog": {
+    "desc": "A data catalog is a repository of metadata of data source (Amazon S3, Amazon RDS). With data catalogs, you can view the column-level information of data. ",
+    "catalogSync": "When data catalog is synced",
+    "useLabels": "Use labels for data catalog"
+  },
+  "identifier": {
+    "desc": "A data identifier is a rule to inspect sensitive data. On the this webpage, you can manage all the identifiers. You can view the built-in identifiers or create identifiers of your own with Regex or keywords.",
+    "howToCreate": "How to create custom data identifiers",
+    "builtInList": "Full list of built-in data identifiers"
+  },
+  "template": {
+    "desc": "A template is a collection of data identifiers. You can define sensitive data in the template by adding data identifiers. The template will be used in sensitive data discovery job. ",
+    "addToTemplate": "How to add data identifiers in the template"
+  },
+  "runjob": {
+    "desc": "A discovery job consists of one or many AWS Glue jobs for actual data detection. ",
+    "jobSettings": "More about Job settings",
+    "howToDownload": "How to download report",
+    "rerunJob": "How to re-run/duplicate job",
+    "howToPause": "How to pause/continue job"
+  },
+  "jobDetail": {
+    "desc": "A sensitive data discovery job consists of one or many AWS Glue jobs for actual data detection. This page shows all Glue job executions on different AWS accounts.",
+    "jobDetailPages": "More about job details"
+  },
+  "account": {
+    "desc": "You can add AWS account manually or automatically (via AWS Organization).",
+    "manualAdd": "How to manually add independent AWS account",
+    "batchAdd": "How to automatically add batch AWS accounts"
+  }
+}

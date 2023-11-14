@@ -1,0 +1,44 @@
+{
+  "instance":"实例",
+  "engine_type":"引擎类型",
+  "url":"链接",
+  "provider":"来源",
+  "provider_account":"云账号",
+  "region":"区域",
+  "operate":"操作",
+  "add": {
+    "addDBInstance": "添加数据库实例",
+    "addDBInstanceDesc": "设置和管理您希望平台发现敏感数据的数据库账户。",
+    "selfMaintain":{
+        "individual":"添加独立数据库实例"
+    },
+    "third":{
+      "cloudAccount":"从云账户导入数据库实例"
+  },
+  "individual":{
+    "via":"独立数据库连接"
+  },
+    "account": {
+      "via": "通过云账户导入",
+      "step1": "选择云账户",
+      "step1Desc": "指定对应的供应商以及账户ID。",
+      
+      "step2": "选择需要导入的数据源",
+      "step2Desc": "批量选择多个数据源导入。",
+      "step2list1": "前往 AWS 账户的 CloudFormation 控制台。",
+      "step2list2_1": "在 ",
+      "step2list2_2": "堆栈",
+      "step2list2_3": "，点击右上角的按钮",
+      "step2list2_4": "创建堆栈",
+      "step2list2_5": " 然后选择 ",
+      "step2list2_6": "使用新资源（标准）",
+      "step2list3_1": "粘贴 ",
+      "step2list3_2": "Amazon S3 网址",
+      "step2list3_3": " 使用你在上面复制的链接。",
+      "step2list4": "按照步骤部署 CloudFormation 堆栈。",
+      "step2list5": "等待直到 CloudFormation 堆栈成功部署（安装）。",
+      "step3": "成功安装代理堆栈后，重新填写账户 ID",
+      "awsAccountId": "AWS 账户 ID"
+    }
+  }
+}

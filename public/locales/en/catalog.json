@@ -1,0 +1,31 @@
+{
+  "privacy": "Privacy: ",
+  "customLabels": "Custom labels: ",
+  "addToTable": "Add to Table",
+  "dataCatalog": "Data catalog: ",
+  "browserCatalog": "Browse data catalogs",
+  "browserCatalogDesc": "The platform connects to data source to create and update data catalogs. A data catalog is a repository of metadata of data sources.",
+  "detail": {
+    "filterCatalogs": "Filter catalogs",
+    "identifier": "Identifiers: ",
+    "selectIdentifier": "Select identifier",
+    "noDataIdentifier": "No data identfiers",
+    "noDataIdentifierDesc": "No data in this catalog was identfied as sensitive data."
+  },
+  "list": {
+    "filterDataCatalog": "Filter data catalogs"
+  },
+  "modal": {
+    "s3BucketDetail": "S3 bucket details",
+    "rdsInstanceDetail": "RDS instance details",
+    "customLabel": "Custom labels: "
+  },
+  "schemaModal": {
+    "detailDescInfo": "These files are structured files and were detected to have the same schema",
+    "detailDescHeader": "These are 10 sampled data entries of this table.",
+    "schema": "Schema",
+    "dataPreview": "Data preview",
+    "folderDetails": "Folder details",
+    "tableDetails": "Table details"
+  }
+}

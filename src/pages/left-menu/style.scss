@@ -1,0 +1,45 @@
+.left-menu {
+  width: 300px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  z-index: 99;
+  user-select: none;
+  background: #fff;
+  transition: all ease-in-out .3s;
+
+  .left-menu-close-btn {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    cursor: pointer;
+    z-index: 9;
+  }
+}
+
+.left-menu-hide {
+  left: -300px !important;
+}
+
+.show-leftmenu-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 10px;
+  top: 16px;
+  border-radius: 40px;
+  background-color: #414D5C;
+  cursor: pointer;
+
+  .show-leftmenu-btn-icon {
+    color: #fff !important;
+  }
+}
+
+.side-nav {
+  // width: 100px;
+}

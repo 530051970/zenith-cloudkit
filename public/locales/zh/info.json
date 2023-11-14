@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "desc": "敏感数据保护方案可让企业客户创建数据目录，跨多个AWS账户发现、保护和可视化敏感数据。",
+    "solutionDo": "解决方案的功能",
+    "getStarted": "开始使用",
+    "archOfSolution": "解决方案的技术架构"
+  },
+  "connect": {
+    "desc": "使用敏感数据保护的第一步是接入AWS账户。接入后，您可以单击特定的AWS账户并查看其数据源（S3、RDS）。",
+    "addAWSAccount": "如何添加AWS账户"
+  },
+  "catalog": {
+    "desc": "数据目录是数据源（Amazon S3、Amazon RDS）元数据的存储库。使用数据目录，您可以查看数据的列级信息。",
+    "catalogSync": "何时同步数据目录",
+    "useLabels": "如何在数据目录中使用标签"
+  },
+  "identifier": {
+    "desc": "数据标识符是用于检查敏感数据的规则。在此网页上，您可以管理所有标识符。您可以查看内置标识符或使用正则表达式或关键词创建自己的标识符。",
+    "howToCreate": "如何创建自定义数据标识符",
+    "builtInList": "内置数据标识符列表"
+  },
+  "template": {
+    "desc": "模板是数据标识符的集合。您可以通过添加数据标识符来定义模板中的敏感数据。模板将用于敏感数据发现作业。",
+    "addToTemplate": "如何在模板中添加数据标识符"
+  },
+  "runjob": {
+    "desc": "敏感数据发现作业由一个或多个AWS Glue作业组成，用于实际数据检测。",
+    "jobSettings": "创建作业及设置",
+    "howToDownload": "如何下载报告",
+    "rerunJob": "如何下载报告",
+    "howToPause": "如何暂停/继续作业"
+  },
+  "jobDetail": {
+    "desc": "敏感数据发现作业由一个或多个AWS Glue作业组成，用于实际数据检测。此页面显示不同AWS账户上的所有Glue作业执行情况。",
+    "jobDetailPages": "更多作业详细信息"
+  },
+  "account": {
+    "desc": "您可以手动添加 或（通过AWS组织）自动添加AWS账户。",
+    "manualAdd": "如何手动添加独立的AWS账户",
+    "batchAdd": "如何自动通过AWS组织添加批量AWS账户"
+  }
+}
