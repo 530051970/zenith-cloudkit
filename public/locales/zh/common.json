@@ -17,6 +17,7 @@
     "scaffolds": "脚手架",
     "dataGenerator":"数据生成器",
     "batchDeleteS3":"批量删除S3",
+    "sshAgent":"内网穿透",
     "notifications":"通知",
     "doc": "文档",
     "version": "版本"

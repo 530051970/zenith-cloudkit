@@ -35,6 +35,10 @@ const Navigation: React.FC<INavigationProps> = (props: INavigationProps) => {
         type: 'link',
         text: t('nav.batchDeleteS3'),
         href: RouterEnum.BatchDeleteS3.path,
+      },{
+        type: 'link',
+        text: t('nav.sshAgent'),
+        href: RouterEnum.SSHAgent.path,
       }],
       
     },

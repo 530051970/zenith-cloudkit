@@ -17,6 +17,7 @@
     "scaffolds": "Scaffold",
     "dataGenerator":"Data generator",
     "batchDeleteS3":"Batch delete S3",
+    "sshAgent":"Config SSH agent",
     "notifications":"Notifications",
     "doc": "Documentation",
     "version": "Version"

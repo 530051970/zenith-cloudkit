@@ -10,6 +10,6 @@ interface RouterEnumType {
 export const RouterEnum: Record<string, RouterEnumType> = {
   Home: { path: '/', element: <Home /> },
   DataGenerate: {path: '/data-generator', element: <DataCatalogList /> },
-  BatchDeleteS3: {path: '/delete-s3', element: <BatchDeleteS3 /> }
-  
+  BatchDeleteS3: {path: '/delete-s3', element: <BatchDeleteS3 /> },
+  SSHAgent: {path: '/ssh-agent', element: <BatchDeleteS3 /> }
 };

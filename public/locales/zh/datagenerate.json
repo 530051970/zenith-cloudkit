@@ -1,4 +1,4 @@
 {
   "dataGenerate": "数据生成工具",
-  "dataGenerateDesc": "本工具可以生成大量的假数据，填充到指定账号下的数据库，或者导出到csv/tsv/sql/json以及前端mock文件"
+  "dataGenerateDesc": "本工具可以随机Mock大量的假数据，涵盖多种敏感场景，填充到指定账号下的数据库，或者导出到csv/tsv/sql/json以及前端mock文件"
 }
