@@ -12,6 +12,7 @@
   },
   "nav": {
     "summary": "首页",
+    "account": "账号管理",
     "tools": "工具类",
     "features": "功能类",
     "scaffolds": "脚手架",

@@ -12,6 +12,7 @@
   },
   "nav": {
     "summary": "Home",
+    "account": "Accounts",
     "tools": "Tool",
     "features": "Feature",
     "scaffolds": "Scaffold",

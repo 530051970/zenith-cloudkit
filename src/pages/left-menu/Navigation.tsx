@@ -24,6 +24,7 @@ const Navigation: React.FC<INavigationProps> = (props: INavigationProps) => {
   const configData: AmplifyConfigType = JSON.parse(originConfig || '{}');
   const navItems: SideNavigationProps.Item[] = [
     { type: 'link', text: t('nav.summary'), href: RouterEnum.Home.path },
+    { type: 'link', text: t('nav.account'), href: RouterEnum.Account.path },
     {
       type: 'section',
       text: t('nav.tools'),
