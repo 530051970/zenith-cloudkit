@@ -101,10 +101,11 @@ const RightModal: React.FC<RightModalProps> = (props: RightModalProps) => {
               {header}
             </span>
           )}
-
+          {/* {!showFolderIcon && (
           <div className="modal-header-close" onClick={closeModal}>
             <Icon name="close" size="medium" />
           </div>
+          )} */}
         </div>
         {children}
         {footer}

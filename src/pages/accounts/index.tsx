@@ -32,22 +32,21 @@ const DataGenerateHeader: React.FC = () => {
 
   return (
     <Header variant="h2" 
-      actions={<Button>Button</Button>}
-      description={t('deletes3:deleteS3Desc')}
+      description={t('account:accountCenterDesc')}
       >
-      {t('deletes3:deleteS3')}
+      {t('account:accountCenter')}
     </Header>
   );
 };
 
-const BatchDeleteS3: React.FC = () => {
+const Accounts: React.FC = () => {
   const [searchParams] = useSearchParams();
   const { t, i18n } = useTranslation();
 
 
   const breadcrumbItems = [
     { text: t('breadcrumb.home'), href: RouterEnum.Home.path },
-    { text: t('breadcrumb.batchDeleteS3'), href: RouterEnum.DataGenerate.path },
+    { text: t('breadcrumb.accountManagement'), href: RouterEnum.DataGenerate.path },
   ];
 
   return (
@@ -67,4 +66,4 @@ const BatchDeleteS3: React.FC = () => {
   );
 };
 
-export default BatchDeleteS3;
+export default Accounts;

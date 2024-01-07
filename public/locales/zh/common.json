@@ -1,8 +1,8 @@
 {
-  "welcome": "欢迎使用CSDC开发者平台！",
+  "welcome": "欢迎使用开发者上云平台！",
   "solution": {
     "title": "AWS 解决方案",
-    "name": "CSDC开发者百宝箱"
+    "name": "开发者上云百宝箱"
   },
   "header": {
     "doc": "文档",
@@ -12,11 +12,12 @@
   },
   "nav": {
     "summary": "首页",
+    "account": "账号管理",
     "tools": "工具类",
     "features": "功能类",
     "scaffolds": "脚手架",
     "dataGenerator":"数据生成器",
-    "batchDeleteS3":"批量删除S3",
+    "batchDeleteS3":"S3消消乐",
     "sshAgent":"内网穿透",
     "notifications":"通知",
     "doc": "文档",
@@ -25,22 +26,14 @@
   "breadcrumb": {
     "home": "百宝箱",
     "summary": "首页",
-    "connectSource": "连接到数据源",
-    "sourceManagement": "数据源管理",
-    "awsAccount": "AWS 账户管理",
-    "dataIdentifiers": "数据标识符",
-    "runJobs": "运行敏感数据发现作业",
-    "browserCatalog": "浏览数据目录",
-    "browserTaskReport": "浏览检测报告",
-    "dataSourceConnection": "数据源连接",
-    "defineTemplate": "定义分类模板",
-    "sensitiveJobs": "敏感数据发现作业",
-    "manageIdentifier": "管理数据识别规则",
-    "showPath": "显示路径",
-    "breadcrumb": "面包屑",
-    "timeline": "时间线"
+    "accountManagement": "账号管理",
+    "dataGenerator": "数据生成器",
+    "genStructuredData": "生成结构化数据",
+    "genUnStructuredData": "生成非结构化数据",
+    "batchDeleteS3":"S3消消乐",
+    "sshAgent":"内网穿透"
   },
-  "title":"CSDC开发者后花园",
+  "title":"开发者上云百宝箱",
   "button": {
     "signin": "登录",
     "cancel": "取消",
