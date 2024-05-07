@@ -1,0 +1,24 @@
+{
+  "basicInfo": "Basic information",
+  "basicInfoDesc": "Basic information of this AWS account",
+  "authStatus": "Authentication status",
+  "statusReason": "Status reason",
+  "organization": "Organization",
+  "filterBuckets": "Filter buckets",
+  "filterInstances": "Filter instances",
+  "connectToRDSDataSource": "Connect to RDS data source",
+  "rdsInstances": "RDS instances",
+  "connectionTips": "The connection may takes around 20-30 seconds.",
+  "connectToDataSourceForAccount": "Connect to data source for account Id: ",
+  "connectToDataSourceForAccountDesc": "You can create data catalogs by connecting data source. ",
+  "header": {
+    "s3Title": "Data source: S3 buckets",
+    "s3Info": "The S3 buckets that are discovered in this AWS account. Connect to S3 buckets to create data catalogs.",
+    "rdsTitle": "Data source: RDS instances",
+    "rdsInfo": "The RDS instances that are discovered in this AWS account. Connect to RDS instances to create data catalogs."
+  },
+  "credentialOption": {
+    "secretManager": "Secret Manager",
+    "userNamePWD": "Username/Password"
+  }
+}

@@ -1,0 +1,13 @@
+.no-access {
+  width: 60%;
+  margin: 100px auto 0 auto;
+
+  .no-access-link {
+    cursor: pointer;
+    color: #0972d3;
+  }
+
+  .no-access-link:hover {
+    text-decoration: underline;
+  }
+}

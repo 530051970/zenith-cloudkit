@@ -1,0 +1,73 @@
+.common-badge {
+  width: fit-content;
+  user-select: none;
+}
+
+.pii-badge {
+  background: #eb6f6f !important;
+}
+
+.no-pii-badge {
+  background: #89bdee !important;
+}
+
+.classified-badge {
+  user-select: none;
+  word-break: break-all !important;
+  white-space: break-spaces;
+  .classified-icon {
+    top: 4px;
+  }
+
+  .classified-span {
+    margin-left: 4px;
+    position: relative;
+    top: 3px;
+  }
+}
+
+.system-badge {
+  color: #0972d3;
+}
+
+.manual-badge {
+  color: #037f0c;
+}
+
+.system-mark-badge {
+  color: #5f6b7a;
+}
+
+.data-indf-badge {
+  width: fit-content !important;
+  color: #fff !important;
+  background-color: #9ba7b6 !important;
+  border-radius: 10px !important;
+  word-break: break-all !important;
+  white-space: break-spaces;
+}
+
+.success-badge {
+  color: #037f0c;
+}
+
+.contain-pii-select {
+  min-width: 80px;
+  position: relative;
+  bottom: 5px;
+}
+
+.non-pii-select {
+  min-width: 60px;
+  position: relative;
+  bottom: 5px;
+}
+
+.fit-select {
+  min-width: 120px;
+  width: fit-content !important;
+}
+
+.failed-badge {
+  color: #d91515;
+}

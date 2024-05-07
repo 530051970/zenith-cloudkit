@@ -1,0 +1,4 @@
+{
+  "accountCenter": "Accounts Management",
+  "accountCenterDesc": "用于统一管理各功能所操作的账号，在添加账号之前请在aws控制台获取拥有特定权限的用户的AKSK..."
+}

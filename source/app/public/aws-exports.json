@@ -1,0 +1,15 @@
+{
+  "aws_project_region": "",
+  "aws_api_endpoint": "/api",
+  "aws_authenticationType": "AUTH_TYPE.OPENID_CONNECT",
+  "aws_oidc_issuer": "https://dev-43241832.okta.com",
+  "aws_oidc_client_id": "0oa7liej6xUztllZL5d7",
+  "aws_oidc_customer_domain": "https://sdps.nowfox.com/logincallback",
+  "aws_alb_url": "",
+  "aws_cognito_region": "",
+  "aws_user_pools_id": "",
+  "aws_user_pools_web_client_id": "",
+  "version": "v1.0.0",
+  "backend_url": "https://sdps-dev.demo.solutions.aws.a2z.org.cn:444",
+  "expired": 12
+}

@@ -1,0 +1,8 @@
+{
+  "dataGenerate": "数据生成工具",
+  "dataGenerateDesc": "一生二，二生三，三生万物，开启你的造数之旅吧...",
+  "dataGenerateStructured": "生成结构化数据",
+  "dataGenerateStructuredDesc": "支持随机生成批量结构化数据，并注入到各类账号的S3/RDS等存储介质，也可支持CSV/SQL/JSON文件导出。",
+  "dataGenerateUnStructured": "生成非结构化数据",
+  "dataGenerateUnStructuredDesc": "功能即将上线，敬请期待～"
+}

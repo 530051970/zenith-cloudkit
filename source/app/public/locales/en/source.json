@@ -1,0 +1,9 @@
+{
+  "instance":"Instance",
+  "engine_type":"Engine type",
+  "url":"Url",
+  "provider":"Provider",
+  "provider_account":"Cloud account",
+  "region":"Region",
+  "operate":"Operate"
+}

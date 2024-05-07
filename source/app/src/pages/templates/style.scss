@@ -1,0 +1,9 @@
+.desc {
+    height: 66px;
+    // width: 90%;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
