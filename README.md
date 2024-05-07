@@ -54,10 +54,22 @@ Feature 3: Describe feature 3 here.
 We welcome contributions from the community! If you have ideas for new features or improvements, please open an issue or submit a pull request.
 
 1. Fork the repository.
-2. Create your feature branch: git checkout -b my-new-feature.
-3. Commit your changes: git commit -am 'Add some feature'.
-4. Push to the branch: git push origin my-new-feature.
+2. Create your feature branch: 
+
+   ```bash
+   git checkout -b my-new-feature
+
+3. Commit your changes:
+
+   ```bash
+   git commit -am 'Add some feature'
+
+4. Push to the branch:
+
+   ```bash
+   git push origin my-new-feature
+
 5. Submit a pull request.
 
 ### License
-This project is licensed under the MIT License - see the <a>LICENSE</a> file for details.
+This project is licensed under the Apache License Version 2.0 - see the [LICENSE](http://www.apache.org/licenses/) file for details.
