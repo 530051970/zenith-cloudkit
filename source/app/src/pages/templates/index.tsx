@@ -15,7 +15,7 @@ const TemplatesHeader: React.FC = () => {
       <Header variant="h2" 
         actions={<Button
             ariaLabel="Report a bug (opens new tab)"
-            href="https://example.com"
+            href="https://github.com/530051970/zenith-cloudkit"
             iconAlign="right"
             iconName="external"
             target="_blank"
