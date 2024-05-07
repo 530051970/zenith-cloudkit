@@ -46,9 +46,9 @@ This will start the application and you can access it at http://localhost:3000 i
 ![login](/source/app/public/imgs/login.png)
 
 ### Features
-Feature 1: Describe feature 1 here.
-Feature 2: Describe feature 2 here.
-Feature 3: Describe feature 3 here.
+- Feature 1: Tools.
+- Feature 2: Templates.
+- Feature 3: Scaffold.
 
 ### Contributing
 We welcome contributions from the community! If you have ideas for new features or improvements, please open an issue or submit a pull request.
