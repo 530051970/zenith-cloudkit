@@ -22,14 +22,14 @@ These instructions will help you install and use Zenith Cloudkit on your local m
 
 ### Installation
 
-To install Awesome Product, simply follow these steps:
+To install Zenith Cloudkit, simply follow these steps:
 
 1. Clone this repository to your local machine:
 
    ```bash
    git clone https://github.com/530051970/zenith-cloudkit.git
 
-2. Navigate to the directory containing Awesome Product:
+2. Navigate to the directory containing Zenith Cloudkit:
 
    ```bash
    cd zenith-cloudkit
@@ -41,7 +41,7 @@ To install Awesome Product, simply follow these steps:
 
 ### Usage
 
-1. Once installed, you can use Awesome Product by running the following command:
+1. Once installed, you can use Zenith Cloudkit by running the following command:
 
    ```bash
    npm install
