@@ -1,0 +1,264 @@
+name: "pull request check"
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+permissions:
+  contents: write
+  id-token: write # required to use OIDC authentication
+
+jobs:
+  semantic-validate:
+    name: semantic-validate
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with :
+          types: |
+           feat
+           fix
+           docs
+           refactor
+           test
+           build
+           chore
+           revert
+          scopes: |
+            be
+            fe
+            be+fe
+            cdk
+            others
+          subjectPattern: ^[\s\w-\./]{5,100}$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            didn't match the configured pattern. Please ensure that the subject
+            1) contains only alphanumeric characters,'_','-',' '.
+            2) length between 5 and 100.
+          requireScope: true
+  pyflakes:
+    needs: semantic-validate
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: pyflakes
+        uses: reviewdog/action-pyflakes@master
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          level: error
+  git-secrets:
+    needs: semantic-validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Checkout awslabs/git-secrets
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          repository: awslabs/git-secrets
+          ref: master
+          path: git-secrets
+      - name: Install git-secrets
+        run: cd git-secrets && sudo make install && cd ..
+      - name: Run git-secrets
+        run: |
+          git-secrets --register-aws
+          git secrets --add --allowed 'source/constructs/lib/common/constants.ts'
+          git-secrets --scan 
+
+  opensource-license-review:
+    needs: semantic-validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v3
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v3
+        with:
+          fail-on-severity: moderate
+      - name: archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+              .git/**/*
+              deployment/**/*
+              docs/**/*
+              ${{ github.workspace }}/source/portal
+              ${{ github.workspace }}/source/constructs               
+              deploy_vtag.yml
+              CHANGELOG.md
+              .cfnnagignore
+              .cfnnag_global_suppress_list
+              .cfnnag_*
+
+  semgrep-scan:
+    needs: semantic-validate
+    runs-on: ubuntu-latest
+    container:
+      # A Docker image with Semgrep installed. Do not change this.
+      image: returntocorp/semgrep
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      # Fetch project source with GitHub Actions Checkout.
+      - uses: actions/checkout@v3
+      # Run the "semgrep ci" command on the command line of the docker image.
+      - run: semgrep ci --config auto --sarif --output=semgrep.sarif
+      - name: Upload SARIF file for GitHub Advanced Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep.sarif
+        if: always()
+
+  viperlight:
+    runs-on: ubuntu-latest
+    needs: semantic-validate
+    env:
+      CI: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Viperlight Scan
+        run: |
+          wget -q https://viperlight-scanner.s3.amazonaws.com/latest/.viperlightrc
+          wget -q https://viperlight-scanner.s3.amazonaws.com/latest/viperlight.zip
+          unzip -q viperlight.zip -d viperlight
+          rm -r ./viperlight.zip
+          cd viperlight  
+          ./install.sh
+          viperlight --version
+          echo "Content scanning utility installation complete `date`"
+          echo "Starting content scanning `date` in `pwd`"
+          echo "github.workspace is...>>>>>"
+          ls -l ${{ github.workspace }}/source
+          cd ${{ github.workspace }}/source
+          viperlight scan -m files-contents -m files-aws -m files-binary -m files-entropy -m files-secrets
+          echo "Completed content scanning `date`"
+
+  py-test:
+    runs-on: ubuntu-latest
+    needs: semantic-validate
+    env:
+      CI: 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: '${{ github.event.pull_request.head.ref }}'
+          repository: '${{ github.event.pull_request.head.repo.full_name }}'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          cd source/constructs/api
+          pip3 install -r requirements.txt
+          pip3 install pytest==7.4.2
+          pip3 install pytest-mock==3.11.1
+          pip3 install httpx==0.25.0
+          pip3 install anyio==3.6.2
+          pip3 install mock==5.1.0
+          pip3 install mock-alchemy==0.2.6
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_CN }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_CN }}
+          aws-region: ${{ secrets.AWS_REGION_CN }}
+      - name: Test with pytest
+        run: |
+          cd source/constructs/api
+          python -m pytest pytest -s
+
+  cdk-unit-test:
+    runs-on: ubuntu-latest
+    needs: semantic-validate
+    env:
+      CI: "false"
+    steps:
+      - name: demo test
+        run: |
+          true
+
+  api-unit-test:
+    runs-on: ubuntu-latest
+    needs: semantic-validate
+    env:
+      CI: "false"
+    steps:
+      - name: demo test
+        run: |
+          true
+
+  code-build-portal:
+    needs: [cdk-unit-test, api-unit-test]
+    runs-on: ubuntu-latest
+    env:
+      CI: "false"
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: Build source
+        run: |
+          echo "Build FE START>>>>>>>>>>>>>>>"
+          cd ${{ github.workspace }}/source/portal
+          rm -rf node_modules
+          npm install --legacy-peer-deps
+          npm run build
+          echo "Build FE END>>>>>>>>>>>>>>>"
+          echo "FE Content is shown as below:"
+          ls -L ${{ github.workspace }}/source/portal
+
+  code-build-backend:
+    needs: [cdk-unit-test, api-unit-test]
+    runs-on: ubuntu-latest
+    env:
+      CI: "false"
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - name: Install CDK
+        run: |
+          npm install -g aws-cdk
+          cdk --version
+      - name: Build source
+        run: |
+          echo "Build BE START>>>>>>>>>>>>>>>"
+          cd ${{ github.workspace }}/source/constructs
+          rm -rf node_modules
+          npm install --legacy-peer-deps
+          cdk synth
+          echo "Build BE END>>>>>>>>>>>>>>>"
+          echo "BE Content is shown as below:"
+          ls -L ${{ github.workspace }}/source/constructs/cdk.out
