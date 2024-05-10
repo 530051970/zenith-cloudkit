@@ -1,10 +1,11 @@
 # Zenith Cloudkit
 
-Welcome to Zenith Cloudkit! This is a fantastic tool designed to make your cloud develop more easier. Whether you're a seasoned professional or just getting started, this README will guide you through everything you need to know to get up and running with Awesome Product.
+Welcome to Zenith Cloudkit! This is a fantastic toolkit designed to make your cloud development more easier. Whether you're a seasoned professional or just getting started, this README will guide you through everything you need to know to get up and running with Zenith Cloudkit.
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
+  - [Architecture](#architecture)
   - [Installation](#installation)
   - [Usage](#usage)
 - [Features](#features)
@@ -13,7 +14,11 @@ Welcome to Zenith Cloudkit! This is a fantastic tool designed to make your cloud
 
 ## Getting Started
 
-These instructions will help you install and use Awesome Product on your local machine.
+These instructions will help you install and use Zenith Cloudkit on your local machine.
+
+### Architecture
+
+![architecture](/source/app/public/imgs/architecture.png)
 
 ### Installation
 

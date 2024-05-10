@@ -62,7 +62,15 @@ const Templates: React.FC = () => {
           type: '2',
           author: "cuihubin",
           date: "2023-08-12"
-          }
+          },
+          {
+            name: "测试代码生成",
+            alt: "code",
+            description: "为用户提供便捷的语音交互体验。通过该助手，用户可以轻松地进行语音搜索、语音指令操作、语音播报等功能。无论是查询天气、播放音乐，还是获取实时新闻，数字语音助手都能快速响应用户需求，为生活增添便利。",
+            type: '2',
+            author: "cuihubin",
+            date: "2023-08-12"
+            }
       ]
     return (<>
      <AppLayout

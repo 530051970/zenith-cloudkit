@@ -56,6 +56,13 @@ const BatchDeleteS3: React.FC = () => {
   const [selectedAcount, setSelectedAcount] = useState(null as any)
   const [step, setStep] = useState(1)
   const [currentPageIndex, setCurrentPageIndex] = useState(1)
+  const accounts = [{label: "23434324441", value:"23434324441"},
+                    {label: "53242443442", value:"53242443442"},
+                    {label: "434242344344", value:"434242344344"},
+                    {label: "434455454564", value:"434455454564"},
+                    {label: "664353453545", value:"664353453545"},
+                    {label: "65656531445", value:"65656531445"}
+  ]
 
 
   const breadcrumbItems = [
@@ -101,10 +108,10 @@ const BatchDeleteS3: React.FC = () => {
       onChange={({ detail }) =>
         setSelectedAcount(detail.selectedOption)
       }
-      options={[]}
-      loadingText="Loading instances"
+      options={accounts}
+      // loadingText="账号加载中"
       placeholder="请选择一个账号..."
-      statusType="loading"
+      // statusType="loading"
     />
     </FormField>
     {/* <div style={{height:5,width:'60%'}}></div> */}
