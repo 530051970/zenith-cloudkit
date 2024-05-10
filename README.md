@@ -54,6 +54,7 @@ This will start the application and you can access it at http://localhost:3000 i
 - Feature 1: Tools.
 - Feature 2: Templates.
 - Feature 3: Scaffold.
+- TBD.
 
 ### Contributing
 We welcome contributions from the community! If you have ideas for new features or improvements, please open an issue or submit a pull request.
