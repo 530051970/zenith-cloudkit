@@ -27,19 +27,13 @@ jobs:
            build
            chore
            revert
-          scopes: |
-            be
-            fe
-            be+fe
-            cdk
-            others
           subjectPattern: ^[\s\w-\./]{5,100}$
           subjectPatternError: |
             The subject "{subject}" found in the pull request title "{title}"
             didn't match the configured pattern. Please ensure that the subject
             1) contains only alphanumeric characters,'_','-',' '.
             2) length between 5 and 100.
-          requireScope: true
+          requireScope: false
   pyflakes:
     needs: semantic-validate
     runs-on: ubuntu-latest
