@@ -12,6 +12,7 @@ import {
   AppLayout,
   Box,
   Button,
+  Checkbox,
   Container,
   ContentLayout,
   FormField,
@@ -23,6 +24,7 @@ import {
   Select,
   Table,
   TextFilter,
+  Toggle,
 } from '@cloudscape-design/components';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
@@ -36,12 +38,11 @@ const DataGenerateHeader: React.FC = () => {
   const { t } = useTranslation();
   const [isExporting, setIsExporting] = useState(false);
   const [fileType, setFileType] = React.useState("xlsx");
-
+  
 
 
   return (
     <Header variant="h2" 
-      actions={<Button>Button</Button>}
       description={t('deletes3:deleteS3Desc')}
       >
       {t('deletes3:deleteS3')}
@@ -56,6 +57,7 @@ const BatchDeleteS3: React.FC = () => {
   const [selectedAcount, setSelectedAcount] = useState(null as any)
   const [step, setStep] = useState(1)
   const [currentPageIndex, setCurrentPageIndex] = useState(1)
+  const [partialDelete, setPartialDelete] = React.useState(false);
   const accounts = [{label: "23434324441", value:"23434324441"},
                     {label: "53242443442", value:"53242443442"},
                     {label: "434242344344", value:"434242344344"},
@@ -81,7 +83,6 @@ const BatchDeleteS3: React.FC = () => {
   return (
     <AppLayout
       contentHeader={<DataGenerateHeader />}
-      
       content={
         <ContentLayout className="catalog-layout">
           {step===1?(
@@ -90,19 +91,18 @@ const BatchDeleteS3: React.FC = () => {
               header={<div style={{paddingLeft:20,paddingTop:30}}><Header variant="h3">配置清理对象</Header></div>}
             >
               <div style={{padding:20,paddingBottom:40}}>
-            <SpaceBetween direction='vertical' size='xxl'>
-            <FormField
-            
-      description={<div>没有想要操作的账号？点击{" "}
-      <Link
-        href="#"
-        variant="primary"
-        fontSize="body-s"
-      >
-        这里
-      </Link>{" "}配置新账号</div>}
-      label="步骤1. 请选择账号"
-    >
+                <SpaceBetween direction='vertical' size='xxl'>
+                <FormField  
+                  description={<div>没有想要操作的账号？点击{" "}
+                  <Link
+                href="#"
+                variant="primary"
+                fontSize="body-s"
+              >
+                这里
+              </Link>{" "}配置新账号</div>}
+              label="步骤1. 请选择账号"
+          >
       <Select
       selectedOption={selectedAcount}
       onChange={({ detail }) =>
@@ -131,23 +131,40 @@ const BatchDeleteS3: React.FC = () => {
             
             </Container>
             </div>
-          ):(
+          ):step===2?(
             <div style={{paddingLeft:20, marginTop:60}}>
             <Container
-              header={<div style={{paddingLeft:20,paddingTop:30}}><Header variant="h3">命中桶对象</Header></div>}
+              header={
+              <Grid gridDefinition={[{colspan:6},{colspan:6}]}>
+              <div style={{paddingLeft:20,paddingTop:30}}>
+                <Header
+                 variant="h3"
+                 description={<SpaceBetween direction='horizontal' size='m'>
+                 <div>当前共有 36 个对象，共选中 12 个对象</div><div style={{marginTop:-27,marginLeft:-100}}><Toggle
+                  onChange={({ detail }) =>
+                    setPartialDelete(detail.checked)
+                  }
+                  checked={partialDelete}
+                >
+                  部分删除
+                </Toggle></div></SpaceBetween>}>命中桶对象</Header>
+              </div>
+              <div style={{display:'flex',justifyContent:'right',paddingTop:50,paddingRight:80}}>
+                <Pagination
+                  currentPageIndex={currentPageIndex}
+                  onChange={({ detail }) =>
+                    setCurrentPageIndex(detail.currentPageIndex)
+                  }
+                  pagesCount={5}
+                />
+              </div>
+              </Grid>}
             >
-              <div style={{padding:20,paddingTop:5,width:'92%'}}>
-                <div style={{display:'flex',justifyContent:'right'}}>
-              <Pagination
-      currentPageIndex={currentPageIndex}
-      onChange={({ detail }) =>
-        setCurrentPageIndex(detail.currentPageIndex)
-      }
-      pagesCount={5}
-    /></div>
+              <div style={{padding:20,paddingTop:5,width:'92%',height:510}}>
+                
               <Table
-              variant="embedded"
-      columnDefinitions={[
+                variant="embedded"
+                columnDefinitions={[
         {
           id: "name",
           header: "名称",
@@ -210,6 +227,30 @@ const BatchDeleteS3: React.FC = () => {
           account: "456882501179",
           region: "Europe (London) eu-west-2",
           createdAt: "February 12, 2023, 18:07:08 (UTC+08:00)",
+        },
+        {
+          name: "cdk-hnb659fds-assets-456882501179-us-west-1",
+          account: "456882501179",
+          region: "Europe (London) eu-west-2",
+          createdAt: "February 12, 2023, 18:07:08 (UTC+08:00)",
+        },
+        {
+          name: "cdk-hnb659fds-assets-456882501179-us-west-1",
+          account: "456882501179",
+          region: "Europe (London) eu-west-2",
+          createdAt: "February 12, 2023, 18:07:08 (UTC+08:00)",
+        },
+        {
+          name: "cdk-hnb659fds-assets-456882501179-us-west-1",
+          account: "456882501179",
+          region: "Europe (London) eu-west-2",
+          createdAt: "February 12, 2023, 18:07:08 (UTC+08:00)",
+        },
+        {
+          name: "cdk-hnb659fds-assets-456882501179-us-west-1",
+          account: "456882501179",
+          region: "Europe (London) eu-west-2",
+          createdAt: "February 12, 2023, 18:07:08 (UTC+08:00)",
         }
       ]}
       loadingText="Loading resources"
@@ -226,22 +267,23 @@ const BatchDeleteS3: React.FC = () => {
           </SpaceBetween>
         </Box>
       }
+      selectionType={partialDelete?'multi':undefined}
     />
             </div>
-            <div style={{padding:30,paddingBottom:10, width:"63%",display:'flex',justifyContent:"right"}}>
-            <SpaceBetween direction='horizontal' size='m'>
             
-            </SpaceBetween>
-            </div>
             </Container>
-            
             </div>
-          )}
-           
+          ):(<div style={{paddingLeft:20, marginTop:60}}>
+            <Container>
+            <div style={{padding:20,paddingTop:185,width:'92%',height:422,textAlign:'center',verticalAlign:'middle'}}>
+            删除成功！点击<Link >返回</Link>
+            </div>
+          </Container>
+            </div>)}
            <div style={{paddingTop:20, paddingBottom:10,display:'flex',justifyContent:"right"}}>
             <SpaceBetween size='m' direction='horizontal'>
-            {step!==1&&<Button onClick={gotoBefore}>上一步</Button>}
-            <Button variant="primary" onClick={gotoNext}>下一步</Button>
+            {step===2&&<Button onClick={gotoBefore}>上一步</Button>}
+            {step!==3&&<Button variant="primary" onClick={gotoNext}>下一步</Button>}
             </SpaceBetween>
             </div>
         </ContentLayout>

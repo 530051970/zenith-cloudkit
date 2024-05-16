@@ -25,23 +25,15 @@
     "version": "Version"
   },
   "breadcrumb": {
-    "home": "Builder's Community",
-    "summary": "Home",
-    "templates": "Templates",
-    "connectSource": "Connect to data source",
-    "sourceManagement": "Source management",
-    "awsAccount": "AWS account management",
-    "dataIdentifiers": "Data identifiers",
-    "runJobs": "Run sensitive data discovery jobs",
-    "browserCatalog": "Browse data catalogs",
-    "browserTaskReport": "View detecting report",
-    "dataSourceConnection": "Data Source Connection",
-    "defineTemplate": "Define classification template",
-    "sensitiveJobs": "Sensitive data discovery jobs",
-    "manageIdentifier": "Manage data identifiers",
-    "showPath": "Show path",
-    "breadcrumb": "Breadcrumbs",
-    "timeline": "Timeline"
+    "home": "CloudKit",
+    "summary": "Summary",
+    "accountManagement": "Account",
+    "templates": "Template",
+    "dataGenerator": "Data generator",
+    "genStructuredData": "generate structured data",
+    "genUnStructuredData": "generate unstructured data",
+    "batchDeleteS3":"batch delete S3",
+    "sshAgent":"SSH Tunnel"
   },
   "title":"One stop data security platform",
   "button": {

@@ -91,8 +91,7 @@ const AddUnStructuredData: React.FC = () => {
       }
       headerSelector="#header"
       breadcrumbs={<CustomBreadCrumb breadcrumbItems={breadcrumbItems} />}
-      navigation={<Navigation activeHref={RouterEnum.DataGenerate.path} />}
-      navigationWidth={290}  
+      navigationHide={true}
     
               
     />

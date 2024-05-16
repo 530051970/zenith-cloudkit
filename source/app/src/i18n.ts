@@ -40,7 +40,8 @@ i18n
       'identifier',
       'info',
       'timeline',
-      'taskreport'
+      'taskreport',
+      'sshAgent'
     ],
     defaultNS: 'common',
     fallbackLng: 'en',
