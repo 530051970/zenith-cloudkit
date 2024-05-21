@@ -7,3 +7,7 @@ zc
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+.DS_Store
+__pycache__
+build

@@ -42,6 +42,8 @@ const Templates: React.FC = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate()
     const [filteringText, setFilteringText] = useState("")
+    const [downloading, setDownloading] = useState(false)
+    const [index, setIndex] = useState(null as any)
     const [currentPageIndex, setCurrentPageIndex] = useState(1)
     const breadcrumbItems = [
       { text: t('breadcrumb.home'), href: RouterEnum.Home.path },
@@ -95,7 +97,7 @@ const Templates: React.FC = () => {
       }
     }
     const downloadTemplate=(i: templateItem)=>{
-
+         
     }
     return (<>
      <AppLayout
