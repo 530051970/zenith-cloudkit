@@ -4,7 +4,7 @@ boto3==1.28.75
 fastapi-pagination==0.12.11
 pandas==2.1.2
 Faker==19.12.1
-pymysql==1.1.0
+pymysql==1.1.1
 sqlalchemy==2.0.22
 tqdm==4.66.1
 pinyin==0.4.0
