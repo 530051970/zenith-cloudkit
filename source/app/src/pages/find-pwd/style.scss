@@ -1,4 +1,4 @@
-.login-div {
+.pwd-div {
   height: 100%;
   width: 100%;
   display: flex;
@@ -95,4 +95,24 @@
   right: 10px;
   color: red;
   font-size: 12px;
+}
+
+.pwd-div .awsui_button-trigger_18eso_7qpbu_97 {
+  border: 1px solid #80808061 !important;
+  border-radius: 5px !important;
+  height: 40px !important;
+}
+
+.pwd-div .awsui_input_2rhyz_13pa9_97 {
+  border: 1px solid #80808061 !important;
+  border-radius: 5px !important;
+  height: 40px !important;
+}
+
+.pwd-div .awsui_options-list_19gcf_qv6vk_93 li {
+  border: 1px solid #80808061 !important;
+  border-radius: 0px !important;
+}
+.item {
+  margin-bottom: 15px;
 }

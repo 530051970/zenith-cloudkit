@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import { getPropertyValues } from 'apis/query/api';
-import { PRIVARY_TYPE_INT_DATA } from 'pages/common-badge/types/badge_type';
-import { TABLE_NAME } from 'enum/common_types';
-import { COLUMN_OBJECT_STR } from 'pages/data-generator/types/data_config';
+import { useEffect, useRef, useState } from 'react';
+// import { TABLE_NAME } from 'enum/common_types';
 
 const asyncFetchFilteringOptions = async (params: {
   filteringText: string;
@@ -25,38 +23,7 @@ const asyncFetchFilteringOptions = async (params: {
   }
   const returnRes = responseRes.map((item: any) => {
     // 定制显示
-    if (
-      params.filteringPropertyKey === COLUMN_OBJECT_STR.Privacy &&
-      params.table === TABLE_NAME.CATALOG_DATABASE_LEVEL_CLASSIFICATION
-    ) {
-      return {
-        propertyKey: params.filteringPropertyKey,
-        value: PRIVARY_TYPE_INT_DATA[item],
-      };
-    }
-    if (
-      params.filteringPropertyKey === 'glue_state' &&
-      params.table === TABLE_NAME.SOURCE_S3_BUCKET &&
-      item === 'Empty'
-    ) {
-      return {};
-    }
-    if (
-      params.filteringPropertyKey === 'stack_status' &&
-      params.table === TABLE_NAME.SOURCE_ACCOUNT &&
-      item === 'Empty'
-    ) {
-      return {};
-    }
-    if (
-      params.filteringPropertyKey === 'status' &&
-      params.table === TABLE_NAME.SOURCE_ACCOUNT
-    ) {
-      return {
-        propertyKey: params.filteringPropertyKey,
-        value: item === 1 ? 'SUCCEEDED' : 'CURRENT',
-      };
-    }
+    
     return {
       propertyKey: params.filteringPropertyKey,
       value: item,

@@ -1,51 +1,27 @@
-import React, { useState } from 'react';
-import Tabs from '@cloudscape-design/components/tabs';
-import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-// import CodeView from "@cloudscape-design/code-view/code-view";
-import CatalogList from './componments/CatalogList';
-import { TAB_LIST } from 'enum/common_types';
-import { useSearchParams } from 'react-router-dom';
-import format from 'date-fns/format';
-import { getExportS3Url, clearS3Object } from 'apis/data-catalog/api';
-import './style.scss';
 import {
   AppLayout,
-  Box,
   Button,
-  Checkbox,
   Container,
   ContentLayout,
   FormField,
   Grid,
   Header,
   Icon,
-  Input,
   Link,
-  Pagination,
   Select,
-  Table,
-  TextFilter,
-  Toggle,
 } from '@cloudscape-design/components';
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CodeMirror from '@uiw/react-codemirror';
-import Highlight from 'react-highlight'
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
-import { alertMsg } from 'tools/tools';
+import { useSearchParams } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
+import './style.scss';
 // import CodeView from '@cloudscape-design/code-view/code-view';
 
 const DataGenerateHeader: React.FC = () => {
   const { t } = useTranslation();
-  const [isExporting, setIsExporting] = useState(false);
-  const [fileType, setFileType] = React.useState("xlsx");
-  
-
-
   return (
     <Header variant="h2" 
       description={t('sshAgent:SSHAgentDesc')}
@@ -76,14 +52,26 @@ const SSHAgent: React.FC = () => {
   const regions = [{label:"cn-north-1", value:"cn-north-1", tag:"中国(北京)"},
                    {label:"cn-northwest-1", value:"cn-northwest-1", tag:"中国(宁夏)"}]
 
-  const vpcs =[{label:"vpc-0a7a48634c022c5c2",value:"vpc-0a7a48634c022c5c2",tags:["SPD DEMO"]},
-               {label:"vpc-05432ec96cea692cb",value:"vpc-05432ec96cea692cb",tags:["SPDDDD"]},
-               {label:"vpc-077a7ad968d6b5566", value:"vpc-077a7ad968d6b5566",tags:["-"]},
-{label:"vpc-0c1e568a5d8436041", value:"vpc-0c1e568a5d8436041",tags:["-"]},
-{label:"vpc-05ac67fe20035168e", value:"vpc-05ac67fe20035168e",tags:["-"]},
-{label:"vpc-0745a0b0d613a3561", value:"vpc-0745a0b0d613a3561",tags:["-"]},
-{label:"vpc-02e461d6842e50001", value:"vpc-02e461d6842e50001",tags:["-"]},
-{label:"vpc-0988d82720929704c", value:"vpc-0988d82720929704c",tags:["-"]},
+  const vpcs = [
+    {label:"vpc-0a7a48634c022c5c2",value:"vpc-0a7a48634c022c5c2",tags:["SPD DEMO"]},
+    {label:"vpc-05432ec96cea692cb",value:"vpc-05432ec96cea692cb",tags:["SPDDDD"]},
+    {label:"vpc-077a7ad968d6b5566", value:"vpc-077a7ad968d6b5566",tags:["-"]},
+    {label:"vpc-0c1e568a5d8436041", value:"vpc-0c1e568a5d8436041",tags:["-"]},
+    {label:"vpc-05ac67fe20035168e", value:"vpc-05ac67fe20035168e",tags:["-"]},
+    {label:"vpc-0745a0b0d613a3561", value:"vpc-0745a0b0d613a3561",tags:["-"]},
+    {label:"vpc-02e461d6842e50001", value:"vpc-02e461d6842e50001",tags:["-"]},
+    {label:"vpc-0988d82720929704c", value:"vpc-0988d82720929704c",tags:["-"]},
+  ]
+
+  const machines = [
+    {label:"i-0604242c984707aec",value:"i-0604242c984707aec",tags:["Hubin's Demo"]},
+    {label:"i-0604242dsd44fdffc",value:"i-0604242dsd44fdffc",tags:["SPDDDD"]},
+    {label:"i-077a7ad968d6b5566", value:"i-077a7ad968d6b5566",tags:["-"]},
+    {label:"i-0c1e568a5d8436041", value:"i-0c1e568a5d8436041",tags:["-"]},
+    {label:"i-05ac67fe20035168e", value:"i-05ac67fe20035168e",tags:["-"]},
+    {label:"i-0745a0b0d613a3561", value:"i-0745a0b0d613a3561",tags:["-"]},
+    {label:"i-02e461d6842e50001", value:"i-02e461d6842e50001",tags:["-"]},
+    {label:"i-0988d82720929704c", value:"i-0988d82720929704c",tags:["-"]},
   ]
   const breadcrumbItems = [
     { text: t('breadcrumb.home'), href: RouterEnum.Home.path },
@@ -171,9 +159,9 @@ const SSHAgent: React.FC = () => {
                 onChange={({ detail }) =>
                   setSelectedVPC(detail.selectedOption)
                 }
-                options={vpcs}
+                options={machines}
                 // loadingText="账号加载中"
-                placeholder="请选择VPC..."
+                placeholder="请选择一台机器实例作为堡垒机..."
                 // statusType="loading"
               /><div style={{fontSize:12,paddingTop:12,textAlign:'right',marginRight:-30}}>下拉框没有合适的机器？</div>
       <div style={{display:"flex",justifyContent:"right"}}><Button >启动一台低配机器</Button></div>

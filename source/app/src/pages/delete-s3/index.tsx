@@ -1,18 +1,7 @@
-import React, { useState } from 'react';
-import Tabs from '@cloudscape-design/components/tabs';
-import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import CatalogList from './componments/CatalogList';
-import { TAB_LIST } from 'enum/common_types';
-import { useSearchParams } from 'react-router-dom';
-import format from 'date-fns/format';
-import { getExportS3Url, clearS3Object } from 'apis/data-catalog/api';
-import './style.scss';
 import {
   AppLayout,
   Box,
   Button,
-  Checkbox,
   Container,
   ContentLayout,
   FormField,
@@ -23,16 +12,16 @@ import {
   Pagination,
   Select,
   Table,
-  TextFilter,
-  Toggle,
+  Toggle
 } from '@cloudscape-design/components';
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
-import { alertMsg } from 'tools/tools';
+import { useSearchParams } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
+import './style.scss';
 
 const DataGenerateHeader: React.FC = () => {
   const { t } = useTranslation();
@@ -121,6 +110,7 @@ const BatchDeleteS3: React.FC = () => {
     >
       <Input
         value={keyword}
+        placeholder='请输入检索关键字...'
         onChange={event =>
           setKeyword(event.detail.value)
         }

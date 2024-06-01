@@ -1,7 +1,8 @@
-.oidc {
+.user {
     width:90%;
     // margin-left: 10%;
-    height: 160px;
+    height: 140px;
+    padding-top:20px;
 }
 
 .label {
@@ -11,22 +12,23 @@
     align-items: center;
 }
 
-.oidc .awsui_button-trigger_18eso_7qpbu_97 {
+.user .awsui_button-trigger_18eso_7qpbu_97 {
     border: 1px solid #80808061 !important;
     border-radius: 5px !important;
     height: 40px !important;
 }
 
-.oidc .awsui_input_2rhyz_13pa9_97 {
+.user .awsui_input_2rhyz_13pa9_97 {
     border: 1px solid #80808061 !important;
     border-radius: 5px !important;
     height: 40px !important;
 }
 
-.oidc .awsui_options-list_19gcf_qv6vk_93 li {
+.user .awsui_options-list_19gcf_qv6vk_93 li {
     border: 1px solid #80808061 !important;
     border-radius: 0px !important;
 }
-.item {
+.user .item {
     margin-bottom: 15px;
+    
 }

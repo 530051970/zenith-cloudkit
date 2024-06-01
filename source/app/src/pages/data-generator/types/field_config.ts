@@ -163,7 +163,7 @@ export const RANDOM_TYPE = [
   {id:"timestamp", name:"时间戳", probability: 0}
 ]
 
-export const DEFAULT_CONFIG = {
+export const PARAM_CONFIG = {
   prefix: "demo",
   tableNum: 50,
   rowNum: 100,
@@ -174,6 +174,16 @@ export const DEFAULT_CONFIG = {
   maxDecimalLength: 5,
   startDate: "1970-01-01",
   endDate: "2050-12-31",
-  outputType: "Local",
-  outputFormat: "excel"
+  // outputType: "Cloud",
+  // outputFormat: "excel"
+}
+
+export const OUTPUT_CONFIG = {
+  outputType: "Cloud",
+  outputFormat: "",
+  targetService: null,
+  targetAccount: null,
+  targetRegion: null,
+  targetInstance: null,
+  targetEndpoint: null
 }

@@ -1,0 +1,36 @@
+author: "hubin@CSDC"
+login:
+  user: 
+    label: "Username"
+    value: "username"
+  sns: 
+    label: "SNS Code"
+    value: "sns"
+    disabled: true
+  oidc:
+    label: "OIDC"
+    value: "oidc"
+    providers:
+      - name: "Cognito"
+        iconUrl: "cognito"
+        description: "AWS's built-in user authentication service"
+      - name: "Authing"
+        iconUrl: "authing"
+        description: "Authentication service for ensuring application security"
+      - name: "Okta"
+        iconUrl: "okta"
+        description: "A service that focuses on identity and access management"
+  third:
+    - type: "google"
+      iconUrlSelected: "google_in"
+      iconUrl: "google"
+      iconStyle: {"width":39,"marginTop":-2}
+    - type: "facebook"
+      iconUrlSelected: "facebook_in"
+      iconUrl: "facebook"
+      iconStyle: {"width":34}
+    - type: "linkedin"
+      iconUrlSelected: "linkedin_in"
+      iconUrl: "linkedin"
+      iconStyle: {"width":35}
+  
