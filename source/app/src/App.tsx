@@ -36,12 +36,12 @@ const CONFIG_URL = '/aws-exports.json'
 
 const ERROR_TIME_KEY = 'OOPS_ERROR_TIMES';
 
-const AppBody: React.FC<SignedInPageProps> = ({ signOut, user }) => {
+const AppBody = ({ signOut, user }:{signOut:any, user: any}) => {
   return (
     // <React.StrictMode>
     <BrowserRouter>
         {user!=null &&<LayoutHeader signOut={signOut} user={user} />}
-          <AppRouter />
+          <AppRouter user={user}/>
           <CommonAlert />
           <PageSpinner />
     </BrowserRouter>
@@ -116,25 +116,6 @@ const OIDCAppRouter: React.FC = () => {
         />
     );
 
-  return (
-    <div className="oidc-login">
-      <div>
-        <div className="title">{t('welcome')}</div>
-      </div>
-      {
-        <div>
-          <Button
-            variant="primary"
-            onClick={() => {
-              auth.signinRedirect();
-            }}
-          >
-            {t('button.signin')}
-          </Button>
-        </div>
-      }
-    </div>
-  );
 };
 
 const App: React.FC = () => {

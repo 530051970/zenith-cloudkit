@@ -4,8 +4,20 @@ export const LOGIN_TYPE = {
   OIDC: 'oidc',
 };
 
+export const LOGIN_TYPE_LABEL = {
+  USER: 'Username',
+  SNS: 'SNS Code',
+  OIDC: 'OIDC',
+};
+
+export const THIRD_LOGIN_TYPE = {
+  GOOGLE: 'google',
+  FACEBOOK: 'facebook',
+  LINKEDIN: 'linkedin',
+};
+
 export const BADGE: Map<string, any> = new Map<string, any>([
-  ['1', {color:"blue", name:"数据安全"}],
+  ['1', {color:"blue", name:"数据处理"}],
   ['2', {color:"red", name:"人工智能"}]
 ]);
 
@@ -28,17 +40,4 @@ export const TAB_LIST = {
 export const DATA_TYPE_ENUM = {
   s3: 's3',
   rds: 'rds',
-};
-
-export const TABLE_NAME = {
-  SOURCE_S3_BUCKET: 'source_s3_bucket',
-  SOURCE_ACCOUNT: 'source_account',
-  SOURCE_RDS_INSTANCE: 'source_rds_instance',
-  DISCOVERY_JOB: 'discovery_job',
-  DISCOVERY_JOB_DATABASE: 'discovery_job_database',
-  CATALOG_TABLE_LEVEL_CLASSIFICATION: 'catalog_table_level_classification',
-  CATALOG_DATABASE_LEVEL_CLASSIFICATION:
-    'catalog_database_level_classification',
-  TEMPLATE_IDENTIFIER: 'template_identifier',
-  TEMPLATE_MAPPING: 'template_mapping',
 };

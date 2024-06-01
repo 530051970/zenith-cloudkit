@@ -1,10 +1,10 @@
-import { Grid, Input, Select } from '@cloudscape-design/components';
-import React from 'react';
+import { Input, Select } from '@cloudscape-design/components';
 import './style.scss';
 interface OIDCProps {
     provider: any,
     username: string,
     password: string,
+    oidcOptions: any[],
     setProvider: Function,
     setUsername: Function,
     setPassword: Function
@@ -13,6 +13,7 @@ const OIDC = (props: OIDCProps) => {
     const {provider,
            username,
            password,
+           oidcOptions,
            setProvider,
            setUsername,
            setPassword
@@ -25,26 +26,27 @@ const OIDC = (props: OIDCProps) => {
             onChange={({ detail }:{detail: any}) =>
                setProvider(detail.selectedOption)
             }
-          options={[
-        {
-          label: "Cognito",
-          iconUrl:"../../imgs/cognito.png",
-          value: "1",
-          tags: ["AWS's built-in user authentication service"]
-        },
-        {
-          label: "Authing",
-          iconUrl: "../../imgs/authing.png",
-          value: "2",
-          tags: ["Authentication service for ensuring application security"]
-        },
-        {
-          label: "Okta",
-          iconUrl: "../../imgs/okta.png",
-          value: "2",
-          tags: ["A service that focuses on identity and access management"]
-        }
-      ]}
+            options={oidcOptions}
+      //     options={[
+      //   {
+      //     label: "Cognito",
+      //     iconUrl:"../../imgs/cognito.png",
+      //     value: "1",
+      //     tags: ["AWS's built-in user authentication service"]
+      //   },
+      //   {
+      //     label: "Authing",
+      //     iconUrl: "../../imgs/authing.png",
+      //     value: "2",
+      //     tags: ["Authentication service for ensuring application security"]
+      //   },
+      //   {
+      //     label: "Okta",
+      //     iconUrl: "../../imgs/okta.png",
+      //     value: "2",
+      //     tags: ["A service that focuses on identity and access management"]
+      //   }
+      // ]}
     />
          </div>
     {/* </Grid> */}

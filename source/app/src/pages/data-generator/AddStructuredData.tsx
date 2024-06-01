@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Wizard from "@cloudscape-design/components/wizard";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './style.scss';
 import {
   AppLayout,
@@ -17,6 +17,7 @@ import {
   Grid,
   Header,
   Input,
+  Modal,
   Pagination,
   RadioGroup,
   Select,
@@ -32,8 +33,10 @@ import CustomizeFieldModal from './componments/CustomizeFieldModal';
 import { InfoLink } from 'pages/task-report/info-link';
 import HelpInfo from 'common/HelpInfo';
 import { buildDocLink } from 'ts/common';
-import { DEFAULT_CONFIG, RANDOM_TYPE } from './types/field_config';
-
+import { PARAM_CONFIG, OUTPUT_CONFIG, RANDOM_TYPE } from './types/field_config';
+import { set } from 'lodash';
+import Preview from './componments/Preview';
+import Output from './componments/Output';
 
 interface Field {
   name: string;
@@ -55,27 +58,33 @@ const AddStructuredDataHeader: React.FC = () => {
 };
 
 const AddStructuredData: React.FC = () => {
-  const [searchParams] = useSearchParams();
   const { t, i18n } = useTranslation();
   const [removeDisabled, setRemoveDisabled] = useState(true)
+  const [editDisabled, setEditDisabled] = useState(true)
   const [pageSize, setPageSize] =  useState(10)
-  const [objectPrefix, setObjectPrefix] =  useState("demo")
-  const [objectNum, setObjectNum] = useState(100)
-  const [itemFieldNum, setItemFieldNum] = useState(50)
-  const [startDate, setStartDate] = useState(DEFAULT_CONFIG.startDate)
-  const [endDate, setEndDate] = useState(DEFAULT_CONFIG.endDate)
-  const [outputType, setOutputType] = useState(DEFAULT_CONFIG.outputType)
-  const [outputFormat, setOutputFormat] = useState(DEFAULT_CONFIG.outputFormat)
-  const [targetAccount, setTargetAccount] = useState({} as any)
-  const [targetService, setTargetService] = useState({} as any)
-  const [targetEndpoint, setTargetEndpoint] = useState({} as any)
-  const [targetRegion, setTargetRegion] = useState({} as any)
+  const [config, setConfig] = useState(PARAM_CONFIG as any)
+  const [outputConfig, setOutputConfig] = useState(OUTPUT_CONFIG as any)
+  // const [outputType, setOutputType] = useState(DEFAULT_CONFIG.outputType)
+  // const [outputFormat, setOutputFormat] = useState(DEFAULT_CONFIG.outputFormat)
+  // const [targetAccount, setTargetAccount] = useState({} as any)
+  // const [targetService, setTargetService] = useState({} as any)
+  // const [targetEndpoint, setTargetEndpoint] = useState({} as any)
+  // const [targetRegion, setTargetRegion] = useState({} as any)
+  const [targetAccountError, setTargetAccountError] = useState('' as string)
+const [targetRegionError, setTargetRegionError] = useState('' as string)
+const [targetServiceError, setTargetServiceError] = useState('' as string)
+const [targetInstanceError, setTargetInstanceError] = useState('' as string)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [changeFieldError, setChangeFieldError] = useState('' as string)
+  const [prefixError, setPrefixError] = useState('' as string)
+  const [rType, setRType] = useState(RANDOM_TYPE as any[])
+  const [randomSum, setRandomSum]= useState(100 as number)
+  const [randomSumError, setRandomSumError] = useState('' as string)
+  const [ver, setVer] = useState(1 as number)
+  const [taskName, setTaskName] = useState('' as string)
+  const [taskNameError, setTaskNameError] = useState('' as string)
+  const navigate = useNavigate();
 
-
-  // const [preferences, setPreferences] = useState({
-  //   pageSize: 10,
-  //   wrapLines: true,
-  // } as any);
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageItems, setCurrentPageItems] = useState([]);
   const [
@@ -91,17 +100,40 @@ const AddStructuredData: React.FC = () => {
   const [
     selectedItems,
     setSelectedItems
-  ] = React.useState([]);
+  ] = React.useState([] as any);
+
+  const [
+    newFieldName,
+    setNewFieldName
+  ] = React.useState('' as string);
 
   useEffect(()=>{
     changePage(1)
   },[pageSize, customizeFields])
 
+  // useEffect(()=>{
+  //   changePage(1)
+  // },[pageSize, customizeFields])
+
+  useEffect(()=>{
+    console.log("changeFieldError")
+    // changePage(1)
+    // setChangeFieldError(changeFieldError)
+  },[changeFieldError,rType])
+
   useEffect(()=>{
     if(selectedItems.length === 0){
       setRemoveDisabled(true)
+      setEditDisabled(true)
     } else {
       setRemoveDisabled(false)
+      if(selectedItems.length === 1){
+        setEditDisabled(false)
+        setNewFieldName(selectedItems[0].name)
+      } else {
+        setEditDisabled(true)
+        setNewFieldName('' as string)
+      }
     }
   },[selectedItems])
 
@@ -119,6 +151,76 @@ const AddStructuredData: React.FC = () => {
     setCurrentPageItems(customizeFields.slice(startIndex, endIndex))
   }
 
+  const changeObjectNum = (value: number)=>{
+    if(value===0) return
+    let tmpVer = ver+1
+    let tmpConfg = config
+    tmpConfg.tableNum = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeRowNum = (value: number)=>{
+    let tmpVer = ver+1
+    if(value===0) return
+    let tmpConfg = config
+    tmpConfg.rowNum = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeItemFieldNum = (value: number)=>{
+    let tmpVer = ver+1
+    if(value===0) return
+    let tmpConfg = config
+    tmpConfg.colNum = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeMinLen = (value: number) =>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    if(value===0) return
+    tmpConfg.minLength = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeMaxLen = (value: number) =>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    if(value===0) return
+    tmpConfg.maxLength = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  // maxIntLength: 5,
+  // maxDecimalLength: 5,
+  // startDate: "1970-01-01",
+  // endDate: "2050-12-31",
+  // outputType: "Local",
+  // outputFormat: "excel"
+
+  const changeMaxInteger = (value: number) =>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    if(value===0) return
+    tmpConfg.maxIntLength = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeMaxDecimal = (value: number) =>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    if(value===0) return
+    tmpConfg.maxDecimalLength = value
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
   const removeFields = ()=>{
     console.log(selectedItems)
     let fields = customizeFields
@@ -127,6 +229,161 @@ const AddStructuredData: React.FC = () => {
     })
     setCustomizeFields(fields)
     setSelectedItems([])
+  }
+
+  const changeStartDate = (date: string)=>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    tmpConfg.startDate = date
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeEndDate = (date: string)=>{
+    let tmpVer = ver+1
+    let tmpConfg = config
+    tmpConfg.endDate = date
+    setConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changePrefix = (value:string) =>{
+      let tmpConfg = config
+      let tmpVer = ver+1
+      tmpConfg.prefix = value
+      setConfig(tmpConfg)
+      setVer(tmpVer)
+      if(value===null || value.trim()===''){
+        setPrefixError("表的前缀名不能为空")
+      } else {
+        setPrefixError("")
+      }
+  }
+
+  const chanteProbability = (type:string,value:number) =>{
+    let delta = 0
+    if(value<0) return
+    const tmpRType = rType
+    for(const item of tmpRType){
+      if(item.id === type){
+        delta =  value - item.probability
+        item.probability = value
+        break
+     }
+    }
+    setRType(tmpRType)
+    console.log(`tmpRType is ${tmpRType}`)
+    const tmpRandomSum = randomSum + delta
+    setRandomSum(tmpRandomSum)
+    if(tmpRandomSum > 100){
+      setRandomSumError("当前的概率总和大于100，请调整各类型比例分布")
+    } else {
+      setRandomSumError("")
+    }
+    // console.log(`value is ${value}`)
+  }
+
+  const editField = ()=>{
+     setShowEditModal(true)
+  }
+
+  const changeFieldName = (value: any)=>{
+    let isValid = true
+    if(value===null || value===''){
+      setChangeFieldError('字段名不能为空')
+    } else {
+      setChangeFieldError('')
+    }
+    for(let i = 0; i<customizeFields.length; i++){
+      if(customizeFields[i].name === value && selectedItems[0].name !== value){
+        setChangeFieldError('字段名不能与其他字段名重复');
+        isValid =false
+        break;
+      }
+    }
+    if(isValid) {
+      setChangeFieldError('')
+    }
+    setNewFieldName(value)
+  }
+
+  const changeOutputType = (value:string) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.outputType = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeOutputFormat = (value:string) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.outputFormat = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeTargetRegion = (region:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.targetRegion = region
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeTargetAccount = (account:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.targetAccount = account
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeTargetService = (service:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.targetService = service
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeTargetInstance = (instance:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.targetInstance = instance
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeTargetEndpoint = (endpoint:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.targetEndpoint = endpoint
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+
+
+  const saveField = () =>{
+     let fields = customizeFields
+     fields.forEach((item:Field) => {
+       if(item.name === selectedItems[0].name){
+         item.name = newFieldName;
+         return
+       }
+     });
+     setCustomizeFields(fields)
+
+     let tmpItem = selectedItems[0]
+     tmpItem.name = newFieldName
+     setSelectedItems([tmpItem])
+     setShowEditModal(false)
+  }
+
+  const cancelField = ()=>{
+    setNewFieldName(selectedItems[0].name)
+    setShowEditModal(false)
   }
 
   const changeCustomizeFields = (addCustomizeFields:[]) => {
@@ -201,8 +458,6 @@ const AddStructuredData: React.FC = () => {
           `步骤 ${stepNumber}`,
         collapsedStepsLabel: (stepNumber, stepsCount) =>
           `步骤 ${stepNumber} of ${stepsCount}`,
-        // skipToButtonLabel: (step, stepNumber) =>
-        //   `跳转到 ${step.title}`,
         navigationAriaLabel: "Steps",
         cancelButton: "取消",
         previousButton: "上一步",
@@ -210,8 +465,48 @@ const AddStructuredData: React.FC = () => {
         submitButton: "启动任务",
         optional: "可选"
       }}
-      onNavigate={({ detail }) =>
+      onSubmit={()=>{
+        if(taskName===null || taskName.length<2 || taskName.length >40) {
+          setTaskNameError("任务名称必须在2-40个字符之间") 
+          return
+        } else {
+          setTaskNameError("")
+        }
+        navigate(RouterEnum.DataGenerate.path)
+      }}
+      onNavigate={({ detail }) => {
+        
+        if(detail.requestedStepIndex === 2 ){
+          if(prefixError!=="" || randomSumError !==""){
+            return
+          }
+        }
+        if(detail.requestedStepIndex === 3 ){
+          if(outputConfig.targetAccount === null || outputConfig.targetAccount ===""){
+            setTargetAccountError("账号为必填项，请选择目标账号")
+            return
+          }
+          if(outputConfig.targetRegion === null || outputConfig.targetRegion ===""){
+            setTargetAccountError("")
+            setTargetRegionError("区域为必填项，请选择目标区域")
+            return
+          }
+          if(outputConfig.targetService === null || outputConfig.targetService ===""){
+            setTargetAccountError("")
+            setTargetRegionError("")
+            setTargetServiceError("服务为必填项，请选择目标服务")
+            return
+          }
+          if(outputConfig.targetInstance === null || outputConfig.targetInstance ===""){
+            setTargetAccountError("")
+            setTargetRegionError("")
+            setTargetServiceError("")
+            setTargetInstanceError("实例为必填项，请选择目标实例")
+            return
+          }
+        }
         setActiveStepIndex(detail.requestedStepIndex)
+        }
       }
       activeStepIndex={activeStepIndex}
       allowSkipTo
@@ -222,13 +517,6 @@ const AddStructuredData: React.FC = () => {
           description:
             "定义数据中必须包含的字段及类型，没有特意指定请点击下一步跳过...",
           content: (
-            // <Container
-            //   header={
-            //     <Header variant="h3">
-            //       当前指定字段
-            //     </Header>
-            //   }
-            // >
               <Table
       onSelectionChange={({ detail }:{detail:any}) =>
         setSelectedItems(detail.selectedItems)
@@ -252,8 +540,7 @@ const AddStructuredData: React.FC = () => {
           isRowHeader: true
         },
         { id: "type", header: "字段类型", cell: e => e.type },
-        { id: "comment", header: "说明", cell: e => e.comment },
-        { id: "operation", header: "操作", cell: e => <>   </> }
+        { id: "comment", header: "说明", cell: e => e.comment }
       ]}
       columnDisplay={[
         { id: "name", visible: true },
@@ -295,6 +582,7 @@ const AddStructuredData: React.FC = () => {
               size="xs"
             >
               <Button disabled={removeDisabled} onClick={()=>removeFields()}>移除自定义字段</Button>
+              <Button disabled={editDisabled} onClick={()=>editField()}>编辑自定义字段</Button>
               <Button variant="primary" onClick={showCustomizeModal}>
                 新增自定义字段
               </Button>
@@ -332,36 +620,6 @@ const AddStructuredData: React.FC = () => {
               { value: 20, label: "20 条记录" }
             ]
           }}
-          // wrapLinesPreference={{}}
-          // stripedRowsPreference={{}}
-          // contentDensityPreference={{}}
-          // contentDisplayPreference={{
-          //   options: [
-          //     { id: "name", label: "Field name" },
-          //     { id: "type", label: "Field type" }
-          //   ]
-          // }}
-          // stickyColumnsPreference={{
-          //   firstColumns: {
-          //     title: "Stick first column(s)",
-          //     description:
-          //       "Keep the first column(s) visible while horizontally scrolling the table content.",
-          //     options: [
-          //       { label: "None", value: 0 },
-          //       { label: "First column", value: 1 },
-          //       { label: "First two columns", value: 2 }
-          //     ]
-          //   },
-          //   lastColumns: {
-          //     title: "Stick last column",
-          //     description:
-          //       "Keep the last column visible while horizontally scrolling the table content.",
-          //     options: [
-          //       { label: "None", value: 0 },
-          //       { label: "Last column", value: 1 }
-          //     ]
-          //   }
-          // }}
         />
       }
     />
@@ -382,14 +640,15 @@ const AddStructuredData: React.FC = () => {
                 >
                   <SpaceBetween direction='vertical' size="s">
                   <FormField
-                    description="如果不希望出现某个类型，可以将该类型的概率配置为0，但是总的概率只和必须为1."
+                    description="如果不希望出现某个类型，可以将该类型的概率配置为0，但是总的分布总和必须为100."
                     label="随机生成的属性类型以及出现的概率"
+                    errorText={randomSumError}
                   >
                     <Grid
                       disableGutters
-                      gridDefinition={new Array(RANDOM_TYPE.length).fill({ colspan: 4 })}
+                      gridDefinition={new Array(rType.length).fill({ colspan: 4 })}
                     >
-                      {RANDOM_TYPE.map(item=>{
+                      {rType.map(item=>{
                         return (
                           <div style={{marginBottom:10}}>
                           <Grid
@@ -397,19 +656,14 @@ const AddStructuredData: React.FC = () => {
                           > 
                             {/* <div style={{marginBottom:10}}> */}
                             <Input disabled value={item.name}/>
-                            <Input value={item.probability.toString()}/>
+                            <Input type="number" value={item.probability.toString()} onChange={event=>{chanteProbability(item.id, parseFloat(event.detail.value))}}/>
                             {/* </div> */}
                           </Grid>
                           </div>
                           )
                       })}
-                      {/* <div>col-10</div>
-                      <div>col-10</div>
-                      <div>col-10</div>
-                      <div>col-10</div>
-                      <div>col-10</div>
-                      <div>col-10</div>
-                      <div>col-10</div> */}
+                      <div style={{display:"none"}}>{ver}</div>
+                      <div style={{display:"none"}}>{randomSum}</div>
                     </Grid>
               </FormField>
               <FormField
@@ -424,9 +678,9 @@ const AddStructuredData: React.FC = () => {
                 description="最小长度">
                 <Input
                   type='number'
-                  value={DEFAULT_CONFIG.minLength.toString()}
+                  value={config.minLength.toString()}
                   onChange={event =>
-                    setObjectPrefix(event.detail.value)
+                    changeMinLen(parseFloat(event.detail.value))
                   }
                   />
                 </FormField>
@@ -436,9 +690,9 @@ const AddStructuredData: React.FC = () => {
                 description="最大长度">
                 <Input
                   type='number'
-                  value={DEFAULT_CONFIG.maxLength.toString()}
+                  value={config.maxLength.toString()}
                   onChange={event =>
-                    setObjectPrefix(event.detail.value)
+                    changeMaxLen(parseFloat(event.detail.value))
                   }
                   />
                 </FormField>
@@ -457,9 +711,9 @@ const AddStructuredData: React.FC = () => {
                 description="整数部分最大位数">
                 <Input
                   type='number'
-                  value={DEFAULT_CONFIG.maxIntLength.toString()}
+                  value={config.maxIntLength.toString()}
                   onChange={event =>
-                    setObjectPrefix(event.detail.value)
+                    changeMaxInteger(parseFloat(event.detail.value))
                   }
                   />
                 </FormField>
@@ -469,9 +723,9 @@ const AddStructuredData: React.FC = () => {
                 description="小数部分最大位数">
                 <Input
                   type='number'
-                  value={DEFAULT_CONFIG.maxDecimalLength.toString()}
+                  value={config.maxDecimalLength.toString()}
                   onChange={event =>
-                    setObjectPrefix(event.detail.value)
+                    changeMaxDecimal(parseFloat(event.detail.value))
                   }
                   />
                 </FormField>
@@ -491,8 +745,8 @@ const AddStructuredData: React.FC = () => {
                   description="起始日期"
                 >
                   <DatePicker
-                    onChange={({ detail }) => setStartDate(detail.value)}
-                    value={startDate}
+                    onChange={({ detail }) => changeStartDate(detail.value)}
+                    value={config.startDate}
                     openCalendarAriaLabel={selectedDate =>
                       "Choose certificate expiry date" +
                       (selectedDate
@@ -509,8 +763,8 @@ const AddStructuredData: React.FC = () => {
                   description="结束日期"
                 >
                   <DatePicker
-                    onChange={({ detail }) => setStartDate(detail.value)}
-                    value={endDate}
+                    onChange={({ detail }) => changeEndDate(detail.value)}
+                    value={config.endDate}
                     openCalendarAriaLabel={selectedDate =>
                       "Choose certificate expiry date" +
                       (selectedDate
@@ -538,37 +792,50 @@ const AddStructuredData: React.FC = () => {
             >
               <SpaceBetween direction='vertical' size='s'>
               <FormField
-                description="生成的数据实体将以指定的前缀名命名，多个数据实体则会以XXX_01的形式体现."
-                label="数据实体的前缀名"
+                description="指定生成表的前缀名XXX，多个表则会以XXX_01、XXX_02...的形式体现, 默认为demo"
+                label="表的前缀名"
+                errorText={prefixError}
               >
                 <Input
-                  value={objectPrefix}
+                  value={config.prefix}
                   onChange={event =>
-                    setObjectPrefix(event.detail.value)
+                    changePrefix(event.detail.value)
                   }
                 />
               </FormField>
               <FormField
-                description="自定义数据实体个数，更多细节请查看帮助文档."
-                label="数据实体的个数"
+                description="自定义表个数，默认50张表"
+                label="表的个数"
               >
                 <Input
-                  value={objectNum.toString()}
+                  value={config.tableNum.toString()}
                   type="number"
                   onChange={event =>
-                    setObjectNum(parseInt(event.detail.value))
+                    changeObjectNum(parseInt(event.detail.value))
                   }
                 />
               </FormField>
               <FormField
-                description="自定义数据实体属性，当前已经自定义属性个数: 12."
-                label="每一个实体的属性个数"
+                description="自定义表行数，默认100行"
+                label="表的行数"
               >
                 <Input
-                  value={itemFieldNum.toString()}
+                  value={config.rowNum.toString()}
                   type="number"
                   onChange={event =>
-                    setItemFieldNum(parseInt(event.detail.value))
+                    changeRowNum(parseInt(event.detail.value))
+                  }
+                />
+              </FormField>
+              <FormField
+                description={`自定义表列数，当前已经自定义 ${customizeFields.length} 列，默认总的列数为50`}
+                label="每一个表的列数"
+              >
+                <Input
+                  value={config.colNum.toString()}
+                  type="number"
+                  onChange={event =>
+                    changeItemFieldNum(parseInt(event.detail.value))
                   }
                 />
               </FormField>
@@ -581,177 +848,20 @@ const AddStructuredData: React.FC = () => {
           description:
             "目前支持本地下载以及数据注入到云服务终端（RDS/S3/Redshift 等）...",
           content: (
-            <Container
-              header={
-                <Header
-                  variant="h2"
-                  description="请选择导出方式"  
-                >
-                  导出方式
-                </Header>
-              }
-            >
-              <SpaceBetween direction="vertical" size="l">
-              <Tiles
-                onChange={({ detail }) => setOutputType(detail.value)}
-                value={outputType}
-                items={[
-                  {
-                    label: "本地",
-                    description: "支持以csv/excel/sql/json形式下载",
-                    value: "Local"
-                  },{
-                    label: "云服务",
-                    description: "支持注入到AWS(S3/RDS/Redshift)",
-                    value: "Cloud"
-                  },{
-                    label: "独立终端",
-                    description: "支持注入到公网存储终端(JDBC等)",
-                    value: "Individual"
-                  }]
-                }
-              />
-              {outputType==="Local"?(
-                <FormField
-                  description="请选择您需要的导出形式"
-                  label="下载格式"
-                >
-                  <RadioGroup
-                    onChange={({ detail }) => setOutputFormat(detail.value)}
-                    value={outputFormat}
-                    items={[
-                      { value: "csv", label: "CSV" },
-                      { value: "excel", label: "XLSX" },
-                      { value: "sql", label: "SQL" },
-                      { value: "json", label: "JSON" }
-                    ]}
-                  />
-                </FormField>
-              ):(outputType==="Cloud"?(
-                <>
-                <FormField
-                  description="请选择您需要的注入的终端所在的账号"
-                  label="云账号"
-                >
-                  <Grid
-                  gridDefinition={[{ colspan: 5 },{ colspan: 5 }]}
-                >
-                <div>
-                <FormField
-                  description="账号ID"
-                >
-                  <Select
-                    selectedOption={targetAccount}
-                    onChange={({ detail }) =>
-                      setTargetAccount(detail.selectedOption)
-                    }
-                    options={[
-                      {
-                        label: "2324432223",
-                        value: "1|cn-northwest-1|2324432223",
-                        tags: ["AWS", "cn-northwest-1"]
-                      },
-                      {
-                        label: "8888888888",
-                        value: "1|cn-north-1|2324432223",
-                        tags: ["AWS", "cn-north-1"]
-                      }
-                    ]}
-                  /> 
-                </FormField>
-                </div>
-                <div>
-                <FormField
-                  description="区域"
-                >
-                  <Select
-                    selectedOption={targetRegion}
-                    onChange={({ detail }) =>
-                      setTargetRegion(detail.selectedOption)
-                    }
-                    options={[
-                      {
-                        label: "cn-north-1",
-                        value: "cn-north-1",
-                        tags: ["AWS", "cn-northwest-1"]
-                      },
-                      {
-                        label: "cn-northwest-1",
-                        value: "cn-northwest-1",
-                        tags: ["AWS", "cn-north-1"]
-                      }
-                    ]}
-                  />
-                
-                </FormField>
-                </div>
-                </Grid>
-
-
-                  
-                </FormField>
-                <FormField
-                  description="请选择您需要的注入的云服务"
-                  label="服务类型"
-                >
-                  <Select
-                    selectedOption={targetService}
-                    onChange={({ detail }) =>
-                      setTargetService(detail.selectedOption)
-                    }
-                    options={[
-                      {
-                        label: "S3",
-                        value: "S3",
-                        iconUrl: "/imgs/s3.png",
-                        tags: ["AWS", "cn-northwest-1"]
-                      },
-                      {
-                        label: "RDS",
-                        value: "RDS",
-                        iconUrl: "/imgs/rds.png",
-                        tags: ["AWS", "cn-north-1"]
-                      },
-                      {
-                        label: "Redshift",
-                        value: "Redshift",
-                        iconUrl: "/imgs/redshift.png",
-                        tags: ["AWS", "cn-north-1"]
-                      }
-                    ]}
-                  />
-                </FormField>
-                </>):(
-                  <>
-                  <FormField
-                  description="请选择您需要的注入的独立终端"
-                  label="终端类型"
-                >
-                  <Select
-                    selectedOption={targetEndpoint}
-                    onChange={({ detail }) =>
-                      setTargetEndpoint(detail.selectedOption)
-                    }
-                    options={[
-                      {
-                        label: "JDBC",
-                        value: "JDBC",
-                        iconUrl: "/imgs/jdbc.png",
-                      },{
-                        label: "OSS",
-                        value: "oss",
-                        iconUrl: "/imgs/jdbc.png",
-                      }
-                    ]}
-                  />
-                </FormField>
-                  </>
-                )
-              )
-
-              }
-              </SpaceBetween>
-            </Container>
+            <Output 
+              outputConfig={outputConfig}
+              targetAccountError={targetAccountError}
+              targetRegionError={targetRegionError}
+              targetServiceError={targetServiceError}
+              targetInstanceError={targetInstanceError}
+              changeOutputType={changeOutputType}
+              changeOutputFormat={changeOutputFormat}
+              changeTargetAccount={changeTargetAccount}
+              changeTargetRegion={changeTargetRegion}
+              changeTargetService={changeTargetService}
+              changeTargetInstance={changeTargetInstance}
+              changeTargetEndpoint={changeTargetEndpoint}
+            />
           )
         },
         {
@@ -759,53 +869,54 @@ const AddStructuredData: React.FC = () => {
           description:
             "请指定最后的数据中必须包含的字段以及类型，如果没有特意指定的请点击下一步跳过...",
           content: (
-            <SpaceBetween size="xs">
-              <Container
-                header={
-                  <Header variant="h2"
-                  actions={
-                    <Button
-                      onClick={() => setActiveStepIndex(0)}
-                    >
-                      重新编辑
-                    </Button>
-                  }
-                  >
-                    任务详情
-                  </Header>
-                }
-              >
-                <ColumnLayout
-                  columns={2}
-                  variant="text-grid"
-                >
-                  <div>
-                    <Box variant="awsui-key-label">
-                      First field
-                    </Box>
-                    <div>Value</div>
-                  </div>
-                  <div>
-                    <Box variant="awsui-key-label">
-                      Second Field
-                    </Box>
-                    <div>Value</div>
-                  </div>
-                </ColumnLayout>
-              </Container>
-              
-            </SpaceBetween>
+            <Preview
+              taskName={taskName}
+              taskNameError={taskNameError}
+              config={config}
+              outputConfig={outputConfig}
+              customLen={customizeFields.length}
+              setTaskName={setTaskName}
+              setActiveStepIndex={setActiveStepIndex}
+              setTaskNameError={setTaskNameError}
+            />
           )
         }
       ]}
     />
       {showModal && <CustomizeFieldModal {...modalProps} changeCustomizeFields={changeCustomizeFields} />}
+      {showEditModal && <Modal
+      onDismiss={() => {
+        setNewFieldName(selectedItems[0].name)
+        setShowEditModal(false)
+      }}
+      visible={showEditModal}
+      footer={
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button variant="link" onClick={cancelField}> 取消</Button>
+            <Button variant="primary" onClick={saveField}>保存</Button>
+          </SpaceBetween>
+        </Box>
+      }
+      header="编辑自定义字段"
+    >
+      <FormField
+        label="字段名称"
+        description="用于用户自定义字段名称"
+        constraintText="字段名不能为空，且不能与现有其他字段重名."
+        errorText={changeFieldError}
+      >
+        <Input 
+          value={newFieldName}
+          onChange={({detail})=>changeFieldName(detail.value)}
+          />
+      </FormField>
+    </Modal>}
         </ContentLayout>
       }
       headerSelector="#header"
       breadcrumbs={<CustomBreadCrumb breadcrumbItems={breadcrumbItems} />}
-      navigation={<Navigation activeHref={RouterEnum.DataGenerate.path} />}
-      navigationWidth={290}
+      navigationHide={true}
     />
     
   );

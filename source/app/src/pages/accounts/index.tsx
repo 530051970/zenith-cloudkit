@@ -1,22 +1,14 @@
-import React, { useState } from 'react';
-import Tabs from '@cloudscape-design/components/tabs';
-import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
+import React, { useEffect, useState } from 'react';
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import CatalogList from './componments/CatalogList';
-import { TAB_LIST } from 'enum/common_types';
 import { useSearchParams } from 'react-router-dom';
-import format from 'date-fns/format';
-import { getExportS3Url, clearS3Object } from 'apis/data-catalog/api';
 import './style.scss';
 import {
   AppLayout,
   Box,
   Button,
   CollectionPreferences,
-  Container,
   ContentLayout,
   Header,
-  Link,
   Pagination,
   Table,
   TextFilter,
@@ -25,16 +17,18 @@ import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
 import { RouterEnum } from 'routers/routerEnum';
 import { useTranslation } from 'react-i18next';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
-import { alertMsg } from 'tools/tools';
+import ConfigModal from './componments/ConfigModal';
 
+// interface AccountProps{
+//   account: string
+//   ak: string
+//   sk: string
+//   status: number
+//   description: string
+
+// }
 const DataGenerateHeader: React.FC = () => {
   const { t } = useTranslation();
-  const [isExporting, setIsExporting] = useState(false);
-  const [fileType, setFileType] = React.useState("xlsx");
-
-
 
   return (
     <Header variant="h2" 
@@ -52,8 +46,16 @@ const Accounts: React.FC = () => {
     selectedItems,
     setSelectedItems
   ] = React.useState([] as any);
+  const [removeDisabled, setRemoveDisabled] = useState(false)
+  const [editDisabled, setEditDisabled] = useState(false)
+  const [showConfigModal, setShowConfigModal] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageItems, setCurrentPageItems] = useState([] as any[]);
+  const [pageSize, setPageSize] = useState(10) 
+
   const accountData = [
     {
+      id: 1,
       account: "23434324441",
       ak: "AKIASALSKK66ZTCRQRVZ",
       sk: "ySEQ****Ceh6",
@@ -61,6 +63,7 @@ const Accounts: React.FC = () => {
       description: ""
     },
     {
+      id: 2,
       account: "53242443442",
       ak: "AKIASALSKK66YMATV6FL",
       sk: "ySEs****Cek8",
@@ -68,6 +71,7 @@ const Accounts: React.FC = () => {
       description: "This is for SDPS Developers!"
     },
     {
+      id: 3,
       account: "434242344344",
       ak: "AKIASALSKK66YMATV6FL",
       sk: "ySEs****Cek8",
@@ -75,6 +79,7 @@ const Accounts: React.FC = () => {
       description: null
     },
     {
+      id: 4,
       account: "434455454564",
       ak: "AKIASALSKK66YMATV6FL",
       sk: "ySEs****Cek8",
@@ -82,6 +87,7 @@ const Accounts: React.FC = () => {
       description: "This is for SDPS Developers!"
     },
     {
+      id: 5,
       account: "664353453545",
       ak: "AKIASALSKK66YMATV6FL",
       sk: "ySEs****Cek8",
@@ -89,6 +95,79 @@ const Accounts: React.FC = () => {
       description: "This is for SDPS Developers!"
     },
     {
+      id: 6,
+      account: "65656531445",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 7,
+      account: "434455454564",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 8,
+      account: "664353453545",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 1,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 9,
+      account: "65656531445",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 10,
+      account: "434455454564",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 11,
+      account: "664353453545",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 1,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 12,
+      account: "65656531445",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 13,
+      account: "434455454564",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 0,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 14,
+      account: "664353453545",
+      ak: "AKIASALSKK66YMATV6FL",
+      sk: "ySEs****Cek8",
+      status: 1,
+      description: "This is for SDPS Developers!"
+    },
+    {
+      id: 15,
       account: "65656531445",
       ak: "AKIASALSKK66YMATV6FL",
       sk: "ySEs****Cek8",
@@ -96,6 +175,42 @@ const Accounts: React.FC = () => {
       description: "This is for SDPS Developers!"
     }
   ]
+
+  const addAccount=()=>{
+    setShowConfigModal(true)
+  }
+
+  const editAccount=()=>{
+    setShowConfigModal(true)
+  }
+
+  const changePage = (currentPage:any)=>{
+    setCurrentPageItems([])
+    console.log("======= pageSize is:"+pageSize)
+    setCurrentPage(currentPage)
+    const startIndex = (currentPage-1)*pageSize
+    const endIndex = currentPage*pageSize
+    // console.log(customizeFields.slice(startIndex, endIndex))
+    setCurrentPageItems(accountData.slice(startIndex, endIndex))
+  }
+
+  useEffect(()=>{
+    if(selectedItems.length===0){
+      setRemoveDisabled(true)
+      setEditDisabled(true)
+    } else if(selectedItems.length >1){
+      setEditDisabled(true)
+      setRemoveDisabled(false)
+    } else {
+      setRemoveDisabled(false)
+      setEditDisabled(false)
+    }
+
+  },[selectedItems])
+
+  useEffect(()=>{
+    changePage(1)
+  },[accountData, pageSize])
 
   const breadcrumbItems = [
     { text: t('breadcrumb.home'), href: RouterEnum.Home.path },
@@ -148,11 +263,6 @@ const Accounts: React.FC = () => {
           id: "description",
           header: "描述",
           cell: item => (item.description===""||item.description===null)?("-"):item.description
-        },
-        {
-          id: "action",
-          header: "操作",
-          cell: item => <Link>权限策略</Link>
         }
       ]}
       columnDisplay={[
@@ -160,14 +270,13 @@ const Accounts: React.FC = () => {
         { id: "ak", visible: true },
         { id: "sk", visible: true },
         { id: "status", visible: true },
-        { id: "description", visible: true },
-        { id: "action", visible: true }
+        { id: "description", visible: true }
       ]}
-      items={accountData}
+      items={currentPageItems}
       loadingText="Loading resources"
       selectionType="multi"
       stickyColumns={{ first: 0, last: 1 }}
-      trackBy="name"
+      trackBy="id"
       empty={
         <Box
           margin={{ vertical: "xs" }}
@@ -175,8 +284,8 @@ const Accounts: React.FC = () => {
           color="inherit"
         >
           <SpaceBetween size="m">
-            <b>No resources</b>
-            <Button>Create resource</Button>
+            <b>没有配置账号</b>
+            <Button>配置账号</Button>
           </SpaceBetween>
         </Box>
       }
@@ -198,8 +307,11 @@ const Accounts: React.FC = () => {
               direction="horizontal"
               size="xs"
             >
-              <Button>删除配置</Button>
-              <Button variant="primary">
+              <Button  disabled={removeDisabled}>删除配置</Button>
+              <Button onClick={editAccount} disabled={editDisabled}>
+                修改配置
+              </Button>
+              <Button variant="primary" onClick={addAccount}>
                 新增配置
               </Button>
             </SpaceBetween>
@@ -209,7 +321,12 @@ const Accounts: React.FC = () => {
         </Header>
       }
       pagination={
-        <Pagination currentPageIndex={1} pagesCount={2} />
+        <Pagination currentPageIndex={currentPage}
+        onChange={({ detail }) =>
+          changePage(detail.currentPageIndex)
+          // setCurrentPage()
+        }
+        pagesCount={Math.ceil(accountData.length/pageSize)} />
       }
       preferences={
         <CollectionPreferences
@@ -255,6 +372,11 @@ const Accounts: React.FC = () => {
         />
       }
     />
+    {showConfigModal && <ConfigModal 
+      showModal={showConfigModal}
+      setShowModal={setShowConfigModal}
+      />
+    }
         </ContentLayout>
       }
       headerSelector="#header"
