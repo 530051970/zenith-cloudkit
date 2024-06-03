@@ -27,26 +27,6 @@ const OIDC = (props: OIDCProps) => {
                setProvider(detail.selectedOption)
             }
             options={oidcOptions}
-      //     options={[
-      //   {
-      //     label: "Cognito",
-      //     iconUrl:"../../imgs/cognito.png",
-      //     value: "1",
-      //     tags: ["AWS's built-in user authentication service"]
-      //   },
-      //   {
-      //     label: "Authing",
-      //     iconUrl: "../../imgs/authing.png",
-      //     value: "2",
-      //     tags: ["Authentication service for ensuring application security"]
-      //   },
-      //   {
-      //     label: "Okta",
-      //     iconUrl: "../../imgs/okta.png",
-      //     value: "2",
-      //     tags: ["A service that focuses on identity and access management"]
-      //   }
-      // ]}
     />
          </div>
     {/* </Grid> */}

@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for sensitive-data-protection-on-aws
+about: Suggest an idea for cloudKit
 title: ''
 labels: feature-request
 assignees: ''

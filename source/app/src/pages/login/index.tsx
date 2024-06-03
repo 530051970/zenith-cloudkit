@@ -1,3 +1,4 @@
+import { AuthFlowType, CognitoIdentityProviderClient, InitiateAuthCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { Button, Checkbox, Grid, Link, SpaceBetween, Tabs } from '@cloudscape-design/components';
 import banner from 'banner.png';
 import { LOGIN_TYPE } from 'enum/common_types';
@@ -21,7 +22,9 @@ const Login: FC = () => {
   const [selectedThird, setSelectedThird]  = useState("" as string);
   const [tabs, setTabs] = useState([] as any[]);
   const [thirdLogin, setThirdLogin] = useState([] as any[]);
-  const [author, setAuthor] =useState("" as string)
+  const [author, setAuthor] = useState("" as string)
+  const [loginParams, setLoginParams] = useState(null as any);
+
   useEffect(()=>{
     let tmp_tabs: any[] =[]
     let tmp_third_login: any[] =[]
@@ -59,14 +62,26 @@ const Login: FC = () => {
         })
       }
       if(configData.login.oidc && configData.login.oidc.providers.length > 0){
+        const tmp_login_params = new Map<string, any>();
         const oidcOptions:any[] =[]
         configData.login.oidc.providers.forEach((item:any)=>{
+          // if(item.name==='Cognito' && item.region!==null && item.clientId !== null && item.userPoolId !== null){
+          //   setCognitoParams(item)
+          //   oidcOptions.push({
+          //     label: item.name,
+          //     iconUrl:`../../imgs/${item.iconUrl}.png`,
+          //     value: item.name,
+          //     tags: [item.description]
+          //   }) 
+          // }
+          // if(item.name==='' || item.name ===''){
           oidcOptions.push({
             label: item.name,
             iconUrl:`../../imgs/${item.iconUrl}.png`,
             value: item.name,
             tags: [item.description]
           })
+          tmp_login_params.set(item.name, item)
         })
         tmp_tabs.push({
           label: <div style={{width:120, textAlign: 'center'}}>{configData.login.oidc.label}</div>,
@@ -82,6 +97,7 @@ const Login: FC = () => {
             setPassword={setPassword}
           />)
         })
+        setLoginParams(tmp_login_params)
       }
       if(configData.login.third && configData.login.third.length > 0){
         tmp_third_login = configData.login.third
@@ -108,6 +124,7 @@ const Login: FC = () => {
   }
 
   const login = () => {
+    console.log("selectedProvider is:"+selectedProvider.value)
     if(activeTabId === LOGIN_TYPE.OIDC && selectedProvider == null){
       setError("Kind reminder: provideId is required")
       return false;
@@ -121,8 +138,62 @@ const Login: FC = () => {
       return false;
     }
 
-    navigate(RouterEnum.Home.path)
+    const loginParam = loginParams.get(selectedProvider.value)
+    switch(selectedProvider.value){
+      case "Cognito":
+        cognitoLogin(loginParam);
+        break;
+      default:
+        break;
+    }
+    // navigate(RouterEnum.Home.path)
   }
+  
+  // const input = { // InitiateAuthRequest
+  //   AuthFlow: "USER_SRP_AUTH" || "REFRESH_TOKEN_AUTH" || "REFRESH_TOKEN" || "CUSTOM_AUTH" || "ADMIN_NO_SRP_AUTH" || "USER_PASSWORD_AUTH" || "ADMIN_USER_PASSWORD_AUTH", // required
+  //   AuthParameters: { // AuthParametersType
+  //     "<keys>": "STRING_VALUE",
+  //   },
+  //   ClientMetadata: { // ClientMetadataType
+  //     "<keys>": "STRING_VALUE",
+  //   },
+  //   ClientId: "STRING_VALUE", // required
+  //   AnalyticsMetadata: { // AnalyticsMetadataType
+  //     AnalyticsEndpointId: "STRING_VALUE",
+  //   },
+  //   UserContextData: { // UserContextDataType
+  //     IpAddress: "STRING_VALUE",
+  //     EncodedData: "STRING_VALUE",
+  //   },
+  // };
+
+  const cognitoLogin = async(loginParam:any)=>{
+    const params = {
+      AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
+      ClientId: loginParam.clientId,
+      AuthParameters: {
+        USERNAME: username,
+        PASSWORD: password,
+    },
+  };
+  try {
+    const command = new InitiateAuthCommand(params);
+    const cognitoClient = new CognitoIdentityProviderClient({
+      region: loginParam.region,
+    });
+    const { AuthenticationResult } = await cognitoClient.send(command);
+    if (AuthenticationResult) {
+      sessionStorage.setItem("idToken", AuthenticationResult.IdToken || '');
+      sessionStorage.setItem("accessToken", AuthenticationResult.AccessToken || '');
+      sessionStorage.setItem("refreshToken", AuthenticationResult.RefreshToken || '');
+      navigate(RouterEnum.Home.path)
+      return AuthenticationResult;
+    }
+  } catch (error) {
+    console.error("Error signing in: ", error);
+    throw error;
+  }
+}
   
   return (
     <div className="login-div">
