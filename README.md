@@ -1,5 +1,7 @@
 # Zenith Cloudkit
 
+English | [简体中文](README_zh.md)
+
 Welcome to Zenith Cloudkit! This is a fantastic toolkit designed to make your cloud development more easier. Whether you're a seasoned professional or just getting started, this README will guide you through everything you need to know to get up and running with Zenith Cloudkit.
 
 ## Table of Contents
@@ -32,7 +34,7 @@ To install Zenith Cloudkit, simply follow these steps:
 2. Navigate to the directory containing Zenith Cloudkit:
 
    ```bash
-   cd zenith-cloudkit
+   cd zenith-cloudkit/source/app
 
 3. Install the necessary dependencies:
 
@@ -44,7 +46,7 @@ To install Zenith Cloudkit, simply follow these steps:
 1. Once installed, you can use Zenith Cloudkit by running the following command:
 
    ```bash
-   npm install
+   npm run start
 
 This will start the application and you can access it at http://localhost:3000 in your web browser.
 
@@ -94,9 +96,6 @@ This will start the application and you can access it at http://localhost:3000 i
 ![preview](/source/app/public/imgs/preview.png)   
 
 - Feature 3: Scaffold.
-
-
-- TBD
   Continuous updates are on the way, so stay tuned.
 
 ### Contributing

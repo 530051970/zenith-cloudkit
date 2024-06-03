@@ -5,6 +5,6 @@ app = FastAPI()
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to Tools-Fusion!"}
+    return {"message": "Welcome to zenith-clodkit API!"}
 
 app.include_router(mocker_router)

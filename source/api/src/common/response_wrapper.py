@@ -5,8 +5,10 @@ from typing import Optional, Generic, TypeVar
 from fastapi import Response
 from fastapi.responses import JSONResponse
 from pydantic.generics import GenericModel
-from common.enum import MessageEnum
+# from common.enum import MessageEnum
 import logging
+
+from common.enum import MessageEnum
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from .constant import const
 
@@ -65,7 +67,7 @@ def resp_err(code: int = MessageEnum.BIZ_DEFAULT_ERR.get_code(),
 
 
 class S3WrapEncoder(json.JSONEncoder):
-    def convert(obj, properties: list[str]):
+    def convert(self, obj, properties: list[str]):
         fields = {}
         for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata' and x in properties]:
             data = obj.__getattribute__(field)
