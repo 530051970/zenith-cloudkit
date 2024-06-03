@@ -1,4 +1,4 @@
-import { AuthFlowType, CognitoIdentityProviderClient, InitiateAuthCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { AuthFlowType, CognitoIdentityProviderClient, InitiateAuthCommand, NotAuthorizedException, UserNotFoundException } from '@aws-sdk/client-cognito-identity-provider';
 import { Button, Checkbox, Grid, Link, SpaceBetween, Tabs } from '@cloudscape-design/components';
 import banner from 'banner.png';
 import { LOGIN_TYPE } from 'enum/common_types';
@@ -18,7 +18,9 @@ const Login: FC = () => {
   const [keep, setKeep] = useState(false);
   const navigate = useNavigate();
   const [error, setError] = useState(null as any);
+  const [config, setConfig]=useState(null as any);
   const [selectedProvider, setSelectedProvider] = useState(null as any);
+  const [selectedProviderName, setSelectedProviderName] = useState(null as any);
   const [selectedThird, setSelectedThird]  = useState("" as string);
   const [tabs, setTabs] = useState([] as any[]);
   const [thirdLogin, setThirdLogin] = useState([] as any[]);
@@ -26,18 +28,84 @@ const Login: FC = () => {
   const [loginParams, setLoginParams] = useState(null as any);
 
   useEffect(()=>{
-    let tmp_tabs: any[] =[]
-    let tmp_third_login: any[] =[]
     const loadConfig = async ()=> {
       let response = await fetch('/config.yaml')
       let data = await response.text()
       return yaml.parse(data);
     }
     loadConfig().then(configData =>{
-      setAuthor(configData.author)
-      if(configData.login.user){
+      setConfig(configData)
+    //   setAuthor(configData.author)
+    //   if(configData.login.user){
+    //     tmp_tabs.push({
+    //       label: <div style={{width:100, textAlign: 'right'}}>{configData.login.user.label}</div>,
+    //       id: "user",
+    //       content: (<User 
+    //                   username={username}
+    //                   password={password}
+    //                   setUsername={setUsername}
+    //                   setPassword={setPassword}
+    //                 />),
+    //       disabled: configData.login.user.disabled || false
+    //     })
+    //   }
+    //   if(configData.login.sns){
+    //     tmp_tabs.push({
+    //       label: <div style={{paddingLeft:20,width:120, textAlign: 'center'}}>{configData.login.sns.label}</div>,
+    //       id: "sns",
+    //       disabled: configData.login.sns.disabled || false,
+    //       content: (<SNS 
+    //                   username={username}
+    //                   password={password}
+    //                   setUsername={setUsername}
+    //                   setPassword={setPassword}
+    //                 />)
+    //     })
+    //   }
+    //   if(configData.login.oidc && configData.login.oidc.providers.length > 0){
+    //     const tmp_login_params = new Map<string, any>();
+    //     const oidcOptions:any[] =[]
+    //     configData.login.oidc.providers.forEach((item:any)=>{
+    //       oidcOptions.push({
+    //         label: item.name,
+    //         iconUrl:`../../imgs/${item.iconUrl}.png`,
+    //         value: item.name,
+    //         tags: [item.description]
+    //       })
+    //       tmp_login_params.set(item.name, item)
+    //     })
+    //     tmp_tabs.push({
+    //       label: <div style={{width:120, textAlign: 'center'}}>{configData.login.oidc.label}</div>,
+    //       id: "oidc",
+    //       disabled: configData.login.oidc.disabled || false,
+    //       content: (<OIDC
+    //         provider= {selectedProvider}
+    //         username={username}
+    //         password={password}
+    //         oidcOptions={oidcOptions}
+    //         setProvider={setSelectedProvider}
+    //         setUsername={setUsername}
+    //         setPassword={setPassword}
+    //       />)
+    //     })
+    //     setLoginParams(tmp_login_params)
+    //   }
+    //   if(configData.login.third && configData.login.third.length > 0){
+    //     tmp_third_login = configData.login.third
+    //     setThirdLogin(tmp_third_login)
+    //   }
+    //   setTabs(tmp_tabs)
+    })
+  },[])
+
+  useEffect(()=>{
+      if(config!==null){
+      let tmp_tabs: any[] =[]
+      let tmp_third_login: any[] =[]
+      setAuthor(config.author)
+      if(config.login.user){
         tmp_tabs.push({
-          label: <div style={{width:100, textAlign: 'right'}}>{configData.login.user.label}</div>,
+          label: <div style={{width:100, textAlign: 'right'}}>{config.login.user.label}</div>,
           id: "user",
           content: (<User 
                       username={username}
@@ -45,14 +113,14 @@ const Login: FC = () => {
                       setUsername={setUsername}
                       setPassword={setPassword}
                     />),
-          disabled: configData.login.user.disabled || false
+          disabled: config.login.user.disabled || false
         })
       }
-      if(configData.login.sns){
+      if(config.login.sns){
         tmp_tabs.push({
-          label: <div style={{paddingLeft:20,width:120, textAlign: 'center'}}>{configData.login.sns.label}</div>,
+          label: <div style={{paddingLeft:20,width:120, textAlign: 'center'}}>{config.login.sns.label}</div>,
           id: "sns",
-          disabled: configData.login.sns.disabled || false,
+          disabled: config.login.sns.disabled || false,
           content: (<SNS 
                       username={username}
                       password={password}
@@ -61,20 +129,10 @@ const Login: FC = () => {
                     />)
         })
       }
-      if(configData.login.oidc && configData.login.oidc.providers.length > 0){
+      if(config.login.oidc && config.login.oidc.providers.length > 0){
         const tmp_login_params = new Map<string, any>();
         const oidcOptions:any[] =[]
-        configData.login.oidc.providers.forEach((item:any)=>{
-          // if(item.name==='Cognito' && item.region!==null && item.clientId !== null && item.userPoolId !== null){
-          //   setCognitoParams(item)
-          //   oidcOptions.push({
-          //     label: item.name,
-          //     iconUrl:`../../imgs/${item.iconUrl}.png`,
-          //     value: item.name,
-          //     tags: [item.description]
-          //   }) 
-          // }
-          // if(item.name==='' || item.name ===''){
+        config.login.oidc.providers.forEach((item:any)=>{
           oidcOptions.push({
             label: item.name,
             iconUrl:`../../imgs/${item.iconUrl}.png`,
@@ -84,14 +142,15 @@ const Login: FC = () => {
           tmp_login_params.set(item.name, item)
         })
         tmp_tabs.push({
-          label: <div style={{width:120, textAlign: 'center'}}>{configData.login.oidc.label}</div>,
+          label: <div style={{width:120, textAlign: 'center'}}>{config.login.oidc.label}</div>,
           id: "oidc",
-          disabled: configData.login.oidc.disabled || false,
+          disabled: config.login.oidc.disabled || false,
           content: (<OIDC
             provider= {selectedProvider}
             username={username}
             password={password}
             oidcOptions={oidcOptions}
+            setSelectedProviderName={setSelectedProviderName}
             setProvider={setSelectedProvider}
             setUsername={setUsername}
             setPassword={setPassword}
@@ -99,13 +158,12 @@ const Login: FC = () => {
         })
         setLoginParams(tmp_login_params)
       }
-      if(configData.login.third && configData.login.third.length > 0){
-        tmp_third_login = configData.login.third
+      if(config.login.third && config.login.third.length > 0){
+        tmp_third_login = config.login.third
         setThirdLogin(tmp_third_login)
       }
-      setTabs(tmp_tabs)
-    })
-  })
+      setTabs(tmp_tabs)}
+  },[config, selectedProvider, username, password])
    
   const forgetPwd =()=>{
     navigate(RouterEnum.FindPWD.path)
@@ -170,6 +228,7 @@ const Login: FC = () => {
   const cognitoLogin = async(loginParam:any)=>{
     const params = {
       AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
+      UserPoolId:loginParam.userPoolId,
       ClientId: loginParam.clientId,
       AuthParameters: {
         USERNAME: username,
@@ -177,11 +236,14 @@ const Login: FC = () => {
     },
   };
   try {
-    const command = new InitiateAuthCommand(params);
+    const command = new InitiateAuthCommand(params);  
     const cognitoClient = new CognitoIdentityProviderClient({
       region: loginParam.region,
     });
+    console.log(`cognitoClient is ${cognitoClient}`)
+    console.log(`command is ${command}`)
     const { AuthenticationResult } = await cognitoClient.send(command);
+    console.log(`AuthenticationResult is ${AuthenticationResult}`)
     if (AuthenticationResult) {
       sessionStorage.setItem("idToken", AuthenticationResult.IdToken || '');
       sessionStorage.setItem("accessToken", AuthenticationResult.AccessToken || '');
@@ -190,8 +252,13 @@ const Login: FC = () => {
       return AuthenticationResult;
     }
   } catch (error) {
-    console.error("Error signing in: ", error);
-    throw error;
+    if(error instanceof UserNotFoundException || error instanceof NotAuthorizedException) {
+      setError(error.message)
+    } else {
+      setError("Unknown error, please contact the administrator.")
+    }
+    // console.error("Error signing in: ", error);
+    // throw error;
   }
 }
   
@@ -233,6 +300,7 @@ const Login: FC = () => {
     <div className='bottom-button'>
     <Button variant="primary" className='login-buttom' onClick={login}>Log in</Button>
     </div>
+    <div style={{display:'none'}}>{selectedProviderName}</div>
     <div style={{color: 'rgb(128, 128, 128)', fontSize: 14,marginTop: 30, width:'90%'}}>
       {(thirdLogin && thirdLogin.length>0)?(<Grid gridDefinition={[{colspan:6},{colspan:6}]}>
         <SpaceBetween direction='horizontal' size='s'>

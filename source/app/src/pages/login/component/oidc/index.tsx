@@ -7,7 +7,8 @@ interface OIDCProps {
     oidcOptions: any[],
     setProvider: Function,
     setUsername: Function,
-    setPassword: Function
+    setPassword: Function,
+    setSelectedProviderName: Function
 }
 const OIDC = (props: OIDCProps) => {
     const {provider,
@@ -16,15 +17,18 @@ const OIDC = (props: OIDCProps) => {
            oidcOptions,
            setProvider,
            setUsername,
-           setPassword
+           setPassword,
+           setSelectedProviderName
            } = props
     return (<div className='oidc'>
         <div className='item'>
           <Select
             placeholder='Please choose one OIDC provider'
             selectedOption={provider}
-            onChange={({ detail }:{detail: any}) =>
+            onChange={({ detail }:{detail: any}) => {
                setProvider(detail.selectedOption)
+               setSelectedProviderName(detail.selectedOption.value)
+              }
             }
             options={oidcOptions}
     />

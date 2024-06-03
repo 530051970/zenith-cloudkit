@@ -16,3 +16,6 @@ class _Const(object):
 const = _Const()
 const.LOGGER_API = "api"
 const.RESPONSE_SUCCESS = "success"
+const.RESPONSE_FAIL = "fail"
+const.MODE = 'mode'
+const.MODE_DEV = 'dev'
