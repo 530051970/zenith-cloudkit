@@ -1,10 +1,10 @@
-fastapi==0.104.0
+fastapi==0.109.1
 uvicorn==0.23.2
 boto3==1.28.75
 fastapi-pagination==0.12.11
 pandas==2.1.2
 Faker==19.12.1
-pymysql==1.1.0
+pymysql==1.1.1
 sqlalchemy==2.0.22
-tqdm==4.66.1
+tqdm==4.66.3
 pinyin==0.4.0
