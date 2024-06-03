@@ -69,11 +69,33 @@ This will start the application and you can access it at http://localhost:3000 i
 ![nat-2](/source/app/public/imgs/nat-2.png)
 
 - Feature 2: Templates.
-  This module will gradually release a series of small applications. Users can download the corresponding templates, deploy them to their accounts, and start using them immediately.
+  This module will gradually release a series of small applications. Users can download the corresponding templates, deploy them to their accounts, and start using them immediately. If needed, you can submit an issue to contact the author for new templates development. You are also welcome to click here to submit a PR for secondary development.
 
-  ### Data-Generator
+![template](/source/app/public/imgs/template.png) 
+
+  ### Data-Generator 
+  During the development of B2B products, B2C products, or model training, the requirements for datasets are becoming increasingly stringent. Generally, these can be summarized as follows:
+![dataset](/source/app/public/imgs/dataset.png) 
+  This product allows you to complete the entire process from data generation to data injection in just a few simple steps. The specifics are as follows:
+  1）Customize fields
+
+![customize](/source/app/public/imgs/customize-fields.png) 
+
+  2）Config tool params
+
+![params](/source/app/public/imgs/tool-params.png) 
+
+  3）Set output endpoint
+
+![endpoint](/source/app/public/imgs/endpoint.png) 
+
+  4）Preview & Start
+
+![preview](/source/app/public/imgs/preview.png)   
 
 - Feature 3: Scaffold.
+
+
 - TBD
   Continuous updates are on the way, so stay tuned.
 
