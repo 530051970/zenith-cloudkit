@@ -8,6 +8,7 @@ class BaseMocker(BaseModel):
     secret_key: Optional[str]    
 
 class RDSMocker(BaseMocker):
+    url: Optional[str]
     instance_id: Optional[str]
     port: Optional[int]
     db_username: Optional[str]

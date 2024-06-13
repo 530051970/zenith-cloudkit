@@ -1,33 +1,33 @@
-import logging
-import os
 import json
 
-logger = logging.getLogger('api')
-logger.setLevel(logging.INFO)
+def handler(event, context):
+    token = event['authorizationToken']
+    
+    # 检查令牌是否有效
+    if token == 'allow':
+        policy = generate_policy('user', 'Allow', event['methodArn'])
+    elif token == 'deny':
+        policy = generate_policy('user', 'Deny', event['methodArn'])
+    else:
+        raise Exception('Unauthorized')
+    
+    return policy
 
-def lambda_handler(event, context):
-    """
-    Those configration will be needed by portal UI.
-    """
+def generate_policy(principal_id, effect, resource):
+    auth_response = {}
+    auth_response['principalId'] = principal_id
 
-    body = {
-        "aws_project_region": os.getenv('aws_project_region', ''),
-        "aws_api_endpoint": os.getenv('aws_api_endpoint', '/api'),
-        "aws_authenticationType": os.getenv('aws_authenticationType', 'AUTH_TYPE.OPENID_CONNECT'),
-        "aws_oidc_issuer": os.getenv('aws_oidc_issuer', ''),
-        "aws_oidc_client_id": os.getenv('aws_oidc_client_id', ''),
-        "aws_oidc_customer_domain": os.getenv('aws_oidc_customer_domain', ''),
-        "aws_oidc_logout": os.getenv('aws_oidc_logout', ''),
-        "aws_cognito_region": os.getenv('aws_cognito_region', ''),
-        "aws_user_pools_id": os.getenv('aws_user_pools_id', ''),
-        "aws_user_pools_web_client_id": os.getenv('aws_user_pools_web_client_id', ''),
-        "version": os.getenv('version', 'v1.0.0'),
-        "backend_url": os.getenv('backend_url', ''),
-        "expired": os.getenv('expired', 12)
-    }
+    if effect and resource:
+        policy_document = {
+            'Version': '2012-10-17',
+            'Statement': [
+                {
+                    'Action': 'execute-api:Invoke',
+                    'Effect': effect,
+                    'Resource': resource
+                }
+            ]
+        }
+        auth_response['policyDocument'] = policy_document
 
-    return {
-        "statusCode": 200,
-        "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body)
-    }
+    return auth_response

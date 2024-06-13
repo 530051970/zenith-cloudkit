@@ -1,23 +1,10 @@
-import {
-  Header,
-  SpaceBetween,
-  Button,
-  Grid,
-  Spinner,
-} from '@cloudscape-design/components';
 import React, { memo, useEffect, useState } from 'react';
-import CircleChart from './items/CircleChart';
 // import CustomLineChart from './items/CustomLineChart';
-import MapChart from './items/MapChart';
-import RDSCatalogOverview from './items/RDSCatalogOverview';
-import TableData from './items/TableData';
 import { getCatalogTopNData } from 'apis/dashboard/api';
-import { ITableListKeyValue, ITableDataType } from 'ts/dashboard/types';
-import { useNavigate } from 'react-router-dom';
-import { RouterEnum } from 'routers/routerEnum';
-import { useTranslation } from 'react-i18next';
-import IdentifierTableData from './items/IdentifierTable';
 import { Props } from 'common/PropsModal';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableDataType, ITableListKeyValue } from 'ts/dashboard/types';
 
 export const Tools: React.FC<any> = memo(() => {
   const navigate = useNavigate();
@@ -63,7 +50,7 @@ export const Tools: React.FC<any> = memo(() => {
 
   return (
     <div style={{height:500}}>
-      
+      <img src="../../imgs/tbd.png" alt='tbd' style={{width:350,marginTop:50,marginLeft:'30%'}}/>
     </div>
   );
 });

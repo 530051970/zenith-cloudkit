@@ -185,5 +185,9 @@ export const OUTPUT_CONFIG = {
   targetAccount: null,
   targetRegion: null,
   targetInstance: null,
-  targetEndpoint: null
+  targetEndpoint: null,
+  credentialType: "userpwd", // "userpwd|secret"
+  credentialUsername: null,
+  credentialPassword: null,
+  credentialSecretId: null
 }

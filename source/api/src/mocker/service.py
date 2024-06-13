@@ -1,3 +1,4 @@
+from datetime import datetime
 import boto3
 import pandas
 import logging
@@ -153,9 +154,9 @@ def gen_data_2_rds(mock: RDSMocker):
     return __create_table_data(table_schema, mock, db_endpoint)
 
 def __create_database(mock: Union[RDSMocker, JDBCMocker], db_endpoint):
-    # conn = pymysql.connect(host="localhost" if db_endpoint else mock.url, user=mock.db_username, password=mock.db_password,
+    # conn = pymysql.connect(host="localhost", user=mock.db_username, password=mock.db_password,
     #                        port=3306, connect_timeout=5)
-    conn = pymysql.connect(host=db_endpoint if db_endpoint else mock.url, user=mock.db_username, password=mock.db_password,
+    conn = pymysql.connect(host=mock.url, user=mock.db_username, password=mock.db_password,
                            port=mock.port, connect_timeout=5)
     # create database if not exists
     # TODO:DB existed? exit:continue
@@ -163,6 +164,7 @@ def __create_database(mock: Union[RDSMocker, JDBCMocker], db_endpoint):
         cur.execute(f"CREATE DATABASE IF NOT EXISTS {mock.db_name} CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci")
     conn.commit()
     conn.close()
+    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}::DataBase=>{mock.db_name} creation completed!!')
 
 def __general_data_schema(required_fields: List[str], field_num: int):
     data_schema = []
@@ -180,8 +182,8 @@ def __general_data_schema(required_fields: List[str], field_num: int):
     return data_schema
 
 def __create_table_data(table_schema, mock: Union[RDSMocker, JDBCMocker], db_endpoint):
-    db_connection_str = f'mysql+pymysql://{mock.db_username}:{mock.db_password}@{db_endpoint if db_endpoint else mock.url}:{mock.port}/{mock.db_name}?charset=utf8mb4&collation=utf8mb4_general_ci'
-    # db_connection_str = f'mysql+pymysql://{mock.db_username}:{mock.db_password}@localhost:3306/{mock.db_name}'
+    # db_connection_str = f'mysql+pymysql://{mock.db_username}:{mock.db_password}@{db_endpoint if db_endpoint else mock.url}:{mock.port}/{mock.db_name}?charset=utf8mb4&collation=utf8mb4_general_ci'
+    db_connection_str = f'mysql+pymysql://{mock.db_username}:{mock.db_password}@{mock.url}:{mock.port}/{mock.db_name}'
     db_connection = create_engine(db_connection_str)
     required_source_data = load_required_source_data(table_schema)
 
@@ -189,8 +191,7 @@ def __create_table_data(table_schema, mock: Union[RDSMocker, JDBCMocker], db_end
         insert_data_2_table(table_schema, db_connection, mock.table_name_prefix, required_source_data, mock.row_num_per_table)
     else:
         for i in range(mock.table_num):
-            insert_data_2_table(table_schema, db_connection, f"{mock.table_name_prefix}_{i+1}", required_source_data, mock.row_num_per_table) 
-            
+            insert_data_2_table(table_schema, db_connection, f"{mock.table_name_prefix}_{i+1}", required_source_data, mock.row_num_per_table)    
     return {
         'statusCode': 200,
         'body': f"Data mock completed! Total {mock.table_num} tables, each table has {mock.column_num_per_table} columns, {mock.row_num_per_table} rows "
@@ -198,10 +199,9 @@ def __create_table_data(table_schema, mock: Union[RDSMocker, JDBCMocker], db_end
 
 def insert_data_2_table(table_schema, db_connection, table: str, required_source_data, row_num_per_table):
     dtype={obj["column_name"]: __convert_str_2_sql_type(obj.get("type")) for obj in table_schema}
-    print(f"dtype is========= {dtype}")
     df = pandas.DataFrame(generate_dataframe(row_num_per_table, table_schema, required_source_data))
     df.to_sql(table, con=db_connection, if_exists='replace', index=False, dtype=dtype)  
-    print(f"{table} data inserted successfully !!") 
+    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}::Table=>{table} data inserted successfully !!') 
 
 def __convert_str_2_sql_type(type_str: str or None):
     type_mapping_dict= {
@@ -286,7 +286,7 @@ def load_required_source_data(schema):
                 if entity_type not in required_source_data.keys():
                     required_source_data[entity_type] = load_data_mapping[entity_type]()
             else:
-                print(f"{entity_type}-{type(entity_type)}!!!!")
+                pass
                 # required_source_data[entity_type] = gen_random_value(entity_type)
     return required_source_data
 

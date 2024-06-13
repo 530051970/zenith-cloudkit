@@ -1,23 +1,9 @@
-import {
-  Button,
-  Grid,
-  Header,
-  SpaceBetween,
-  Spinner,
-} from '@cloudscape-design/components';
-import React, { memo, useEffect, useState } from 'react';
-import S3CatalogOverview from './items/S3CatalogOverview';
-import MapChart from './items/MapChart';
-import CircleChart from './items/CircleChart';
-import TableData from './items/TableData';
 import { getCatalogTopNData } from 'apis/dashboard/api';
-import { ITableDataType, ITableListKeyValue } from 'ts/dashboard/types';
-import { useNavigate } from 'react-router-dom';
-import { RouterEnum } from 'routers/routerEnum';
-import Pagination from './items/Pagination';
-import { useTranslation } from 'react-i18next';
-import IdentifierTableData from './items/IdentifierTable';
 import { Props } from 'common/PropsModal';
+import React, { memo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ITableDataType, ITableListKeyValue } from 'ts/dashboard/types';
 
 const Links: React.FC<any> = memo(() => {
   const navigate = useNavigate();
@@ -70,7 +56,7 @@ const Links: React.FC<any> = memo(() => {
 
   return (
     <div style={{height:500}}>
-      
+      <img src="../../imgs/tbd.png" alt='tbd' style={{width:350,marginTop:50,marginLeft:'30%'}}/>
     </div>
   );
 });

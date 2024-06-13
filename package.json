@@ -11,6 +11,7 @@
     "cdk": "cdk"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^29.5.12",
     "@types/node": "20.12.7",
     "aws-cdk": "2.140.0",
@@ -23,6 +24,7 @@
     "@aws-sdk/client-cognito-identity-provider": "^3.588.0",
     "aws-cdk-lib": "2.140.0",
     "constructs": "^10.0.0",
+    "fs-extra": "^11.2.0",
     "source-map-support": "^0.5.21"
   }
 }

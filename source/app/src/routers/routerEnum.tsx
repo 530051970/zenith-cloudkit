@@ -6,6 +6,7 @@ export const RouterEnum: Record<string, RouterEnumType> = {
   Login: { path: '/login'},
   FindPWD: { path: '/find-password'},
   Register: { path: '/create-account'},
+  ChangePWD: { path: '/change-password'},
   Home: { path: '/'},
   Account: { path: '/account'},
   Templates: { path: '/templates'},

@@ -4,12 +4,12 @@ import {
 } from '@cloudscape-design/components';
 import Badge from "@cloudscape-design/components/badge";
 import React from 'react';
-import { RouterEnum } from 'routers/routerEnum';
-import './style.scss';
 import { useTranslation } from 'react-i18next';
+import { RouterEnum } from 'routers/routerEnum';
 import { AMPLIFY_CONFIG_JSON, buildDocLink } from 'ts/common';
 import { AmplifyConfigType } from 'ts/types';
 import banner from '../../banner.png';
+import './style.scss';
 
 interface INavigationProps {
   activeHref: string;
@@ -65,6 +65,13 @@ const Navigation: React.FC<INavigationProps> = (props: INavigationProps) => {
       text: t('nav.doc'),
       href: buildDocLink(i18n.language),
       external: true,
+    },
+    {
+      type: 'link',
+      text: '退出',
+      href: ''
+      // href: buildDocLink(i18n.language),
+      // external: true,
     },
     // {
     //   type: 'link',
