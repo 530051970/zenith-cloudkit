@@ -1,21 +1,28 @@
-class _Const(object):
+"""
+Manage constants for the API module
+"""
+class Const:
+    """
+    constants Class
+    """
     class ConstError(TypeError):
+        """constants  error"""
         def __init__(self, msg):
             super().__init__(msg)
 
     def __setattr__(self, name, value):
         if name in self.__dict__:
-            err = self.ConstError("Can't change const.%s" % name)
+            err = self.ConstError(f"Can't change const.{name}")
             raise err
         if not name.isupper():
-            err = self.ConstError('Const name "%s" is not all uppercase' % name)
+            err = self.ConstError(f"Const name {name} is not all uppercase")
             raise err
         self.__dict__[name] = value
-
-
-const = _Const()
-const.LOGGER_API = "api"
-const.RESPONSE_SUCCESS = "success"
-const.RESPONSE_FAIL = "fail"
-const.MODE = 'mode'
-const.MODE_DEV = 'dev'
+    
+    def __init__(self):
+        self.logger_api = "api"
+        self.response_success = "success"
+        self.response_fail = "fail"
+        self.http_header_authorization = "Authorization"
+        self.execlude_path_list = ['/', '/docs', '/openapi.json']
+        self.user = "user"

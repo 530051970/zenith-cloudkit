@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { Container, FormField, Grid, Header, Input, RadioGroup, Select, Tiles } from '@cloudscape-design/components';
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { Button, Container, FormField, Grid, Header, RadioGroup, Select, Tiles } from '@cloudscape-design/components';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { RouterEnum } from 'routers/routerEnum';
 
@@ -11,6 +11,9 @@ interface OutputProps{
     targetRegionError: string
     targetServiceError: string
     targetInstanceError: string
+    targetSecretIdError: string
+    targetUsernameError: string
+    targetPasswordError: string
     changeOutputType: (type:string)=>void
     changeOutputFormat: (format:string)=>void
     changeTargetAccount: (format: any)=>void
@@ -18,6 +21,10 @@ interface OutputProps{
     changeTargetService: (service: any)=>void
     changeTargetInstance: (instance: any)=>void
     changeTargetEndpoint: (endpoint: any)=>void
+    changeCredentialType: (endpoint: any)=>void
+    changeCredentialUsername: (endpoint: any)=>void
+    changeCredentialPassword: (endpoint: any)=>void
+    changeCredentialSecretId: (endpoint: any)=>void
 }
 
   
@@ -28,13 +35,20 @@ const Output: React.FC<OutputProps> = (props:OutputProps) => {
     targetRegionError,
     targetServiceError,
     targetInstanceError,
+    targetSecretIdError,
+    targetUsernameError,
+    targetPasswordError,
     changeOutputType,
     changeOutputFormat,
     changeTargetAccount,
     changeTargetRegion,
     changeTargetService,
     changeTargetInstance,
-    changeTargetEndpoint
+    changeTargetEndpoint,
+    changeCredentialType,
+    changeCredentialUsername,
+    changeCredentialPassword,
+    changeCredentialSecretId
   } = props
 
   const navigate = useNavigate()
@@ -94,11 +108,11 @@ const Output: React.FC<OutputProps> = (props:OutputProps) => {
               ):(outputConfig.outputType==="Cloud"?(
                 <>
                 <FormField
-                  description="请选择您需要的注入的终端所在的账号"
+                  description={(<div>请选择您需要的注入的终端所在的账号,如果下拉列表没有目标账号，点 <Link to={RouterEnum.Account.path}> 这里 </Link>追加</div>)}
                   label="云账号"
                 >
                   <Grid
-                  gridDefinition={[{ colspan: 4 },{ colspan: 4 },{ colspan: 4 }]}
+                  gridDefinition={[{ colspan: 6 },{ colspan: 6 }]}
                 >
                 <div>
                 <FormField
@@ -153,10 +167,10 @@ const Output: React.FC<OutputProps> = (props:OutputProps) => {
                 
                 </FormField>
                 </div>
-                <div style={{paddingTop:30,paddingLeft:60}}>
+                {/* <div style={{paddingTop:30,paddingLeft:60}}>
                     <span style={{fontSize:12,color:'rgb(95, 107, 122)'}}>下拉列表没有目标账号？点</span><Link to={RouterEnum.Account.path}> 这里 </Link><span style={{fontSize:12,color:'rgb(95, 107, 122)'}}>追加</span>
-                    {/* <Button onClick={addAccount}>没有目标账号？点击添加</Button> */}
-                </div>
+                    <Button onClick={addAccount}>没有目标账号？点击添加</Button>
+                </div> */}
                 </Grid>
 
 
@@ -227,6 +241,86 @@ const Output: React.FC<OutputProps> = (props:OutputProps) => {
                     ]}
                   />
                 </FormField>
+                <FormField
+                  description="请选择连接终端的方式"
+                  label="登录凭证"
+                >
+                  <Tiles
+      onChange={({ detail }) => changeCredentialType(detail.value)}
+      value={outputConfig.credentialType}
+      items={[
+        { label: "密钥管理器", value: "secret" },
+        { label: "用户名/密码", value: "userpwd" }
+      ]}
+    />
+    {outputConfig.credentialType==='secret'?(<Grid
+      gridDefinition={[{ colspan: 12 }]}
+    >
+    <div><FormField
+      description="密钥"
+      errorText={targetSecretIdError}
+    >
+      <Select
+                    placeholder='请选择密钥'
+                    selectedOption={outputConfig.credentialSecretId}
+                    onChange={({ detail }) =>
+                      changeCredentialSecretId(detail.selectedOption)
+                    }
+                    options={[
+                      {
+                        label: "SDPS-DEV",
+                        value: "arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:SDPS-Dev-apXd6l",
+                        tags: ["arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:SDPS-Dev-apXd6l"]
+                      },
+                      {
+                        label: "database-mysql",
+                        value: "arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:SDPS-pKc1Jd",
+                        tags: ["arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:SDPS-pKc1Jd"]
+                      },
+                      {
+                        label: "database-mysql2",
+                        value: "arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:member-a-mysql-GjEjx3",
+                        tags: ["arn:aws-cn:secretsmanager:cn-northwest-1:691104259771:secret:member-a-mysql-GjEjx3"]
+                      }
+                    ]}
+                  />
+
+
+    </FormField></div></Grid>):(
+      <Grid
+      gridDefinition={[{ colspan: 6 },{ colspan: 6 }]}
+    >
+    <div>
+    <FormField
+      description="用户名"
+      errorText={targetUsernameError}
+    >
+      <Input 
+        value={outputConfig.credentialUsername}
+        onChange={({detail})=>changeCredentialUsername(detail.value)}
+        placeholder='请输入登录用户名'
+      />
+    </FormField>
+    </div>
+    <div>
+    <FormField
+      description="密码"
+      errorText={targetPasswordError}
+    >
+      <Input 
+        value={outputConfig.credentialPassword}
+        onChange={({detail})=>changeCredentialPassword(detail.value)}
+        placeholder='请输入登录密码'
+      />
+    
+    </FormField>
+    </div>
+   
+    </Grid>
+    )}
+              
+                </FormField>
+                
                 </>):(
                   <>
                   <FormField

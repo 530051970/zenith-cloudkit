@@ -1,20 +1,15 @@
 import {
   AppLayout,
-  Button,
-  Container,
   ContentLayout,
-  Header,
+  Header
 } from '@cloudscape-design/components';
-import React from 'react';
-import Overview from './comps/Overview';
-import Charts from './comps/Charts';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
+import { useNavigate } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
+import Charts from './comps/Charts';
 
 const HomeHeader: React.FC = () => {
   const { t } = useTranslation();
@@ -50,6 +45,8 @@ const Home: React.FC = () => {
     },
   ];
   return (
+    <>
+    {/* <LayoutHeader signOut={()=>{}} user={""} /> */}
     <AppLayout
       contentHeader={<HomeHeader />}
       content={<HomeContent />}
@@ -57,7 +54,9 @@ const Home: React.FC = () => {
       breadcrumbs={<CustomBreadCrumb breadcrumbItems={breadcrumbItems} />}
       navigation={<Navigation activeHref={RouterEnum.Home.path} />}
       navigationWidth={290}
+      toolsHide={true}
     />
+    </>
   );
 };
 

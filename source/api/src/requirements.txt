@@ -8,3 +8,5 @@ pymysql==1.1.1
 sqlalchemy==2.0.22
 tqdm==4.66.3
 pinyin==0.4.0
+mangum==0.17.0
+python-jose==3.3.0

@@ -1,5 +1,5 @@
 import { AuthFlowType, CognitoIdentityProviderClient, InitiateAuthCommand, NotAuthorizedException, UserNotFoundException } from '@aws-sdk/client-cognito-identity-provider';
-import { Button, Checkbox, Grid, Link, SpaceBetween, Tabs } from '@cloudscape-design/components';
+import { Button, Checkbox, Flashbar, Grid, Link, SpaceBetween, Tabs } from '@cloudscape-design/components';
 import banner from 'banner.png';
 import { LOGIN_TYPE } from 'enum/common_types';
 import { FC, useEffect, useState } from 'react';
@@ -26,8 +26,10 @@ const Login: FC = () => {
   const [thirdLogin, setThirdLogin] = useState([] as any[]);
   const [author, setAuthor] = useState("" as string)
   const [loginParams, setLoginParams] = useState(null as any);
+  const [items, setItems] = useState([] as any[]);
 
   useEffect(()=>{
+    console.log("=====login.tsx")
     const loadConfig = async ()=> {
       let response = await fetch('/config.yaml')
       let data = await response.text()
@@ -35,66 +37,6 @@ const Login: FC = () => {
     }
     loadConfig().then(configData =>{
       setConfig(configData)
-    //   setAuthor(configData.author)
-    //   if(configData.login.user){
-    //     tmp_tabs.push({
-    //       label: <div style={{width:100, textAlign: 'right'}}>{configData.login.user.label}</div>,
-    //       id: "user",
-    //       content: (<User 
-    //                   username={username}
-    //                   password={password}
-    //                   setUsername={setUsername}
-    //                   setPassword={setPassword}
-    //                 />),
-    //       disabled: configData.login.user.disabled || false
-    //     })
-    //   }
-    //   if(configData.login.sns){
-    //     tmp_tabs.push({
-    //       label: <div style={{paddingLeft:20,width:120, textAlign: 'center'}}>{configData.login.sns.label}</div>,
-    //       id: "sns",
-    //       disabled: configData.login.sns.disabled || false,
-    //       content: (<SNS 
-    //                   username={username}
-    //                   password={password}
-    //                   setUsername={setUsername}
-    //                   setPassword={setPassword}
-    //                 />)
-    //     })
-    //   }
-    //   if(configData.login.oidc && configData.login.oidc.providers.length > 0){
-    //     const tmp_login_params = new Map<string, any>();
-    //     const oidcOptions:any[] =[]
-    //     configData.login.oidc.providers.forEach((item:any)=>{
-    //       oidcOptions.push({
-    //         label: item.name,
-    //         iconUrl:`../../imgs/${item.iconUrl}.png`,
-    //         value: item.name,
-    //         tags: [item.description]
-    //       })
-    //       tmp_login_params.set(item.name, item)
-    //     })
-    //     tmp_tabs.push({
-    //       label: <div style={{width:120, textAlign: 'center'}}>{configData.login.oidc.label}</div>,
-    //       id: "oidc",
-    //       disabled: configData.login.oidc.disabled || false,
-    //       content: (<OIDC
-    //         provider= {selectedProvider}
-    //         username={username}
-    //         password={password}
-    //         oidcOptions={oidcOptions}
-    //         setProvider={setSelectedProvider}
-    //         setUsername={setUsername}
-    //         setPassword={setPassword}
-    //       />)
-    //     })
-    //     setLoginParams(tmp_login_params)
-    //   }
-    //   if(configData.login.third && configData.login.third.length > 0){
-    //     tmp_third_login = configData.login.third
-    //     setThirdLogin(tmp_third_login)
-    //   }
-    //   setTabs(tmp_tabs)
     })
   },[])
 
@@ -226,31 +168,54 @@ const Login: FC = () => {
   // };
 
   const cognitoLogin = async(loginParam:any)=>{
-    const params = {
-      AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
-      UserPoolId:loginParam.userPoolId,
-      ClientId: loginParam.clientId,
-      AuthParameters: {
-        USERNAME: username,
-        PASSWORD: password,
-    },
-  };
+    // const { initiateAuth } = require('../tools/auth/initiateAuth');
+  //   const params = {
+  //     AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
+  //     // UserPoolId:loginParam.userPoolId,
+  //     ClientId: loginParam.clientId,
+  //     // ChallengeName:"",
+  //     AuthParameters: {
+  //       USERNAME: username,
+  //       PASSWORD: password,
+  //   },
+  // };
   try {
-    const command = new InitiateAuthCommand(params);  
-    const cognitoClient = new CognitoIdentityProviderClient({
-      region: loginParam.region,
-    });
-    console.log(`cognitoClient is ${cognitoClient}`)
-    console.log(`command is ${command}`)
-    const { AuthenticationResult } = await cognitoClient.send(command);
-    console.log(`AuthenticationResult is ${AuthenticationResult}`)
-    if (AuthenticationResult) {
-      sessionStorage.setItem("idToken", AuthenticationResult.IdToken || '');
-      sessionStorage.setItem("accessToken", AuthenticationResult.AccessToken || '');
-      sessionStorage.setItem("refreshToken", AuthenticationResult.RefreshToken || '');
+    const authResponse = await initiateAuth(loginParam.clientId, loginParam.region, username, password);
+      if(authResponse.ChallengeName==="NEW_PASSWORD_REQUIRED"){
+        navigate(RouterEnum.ChangePWD.path, { 
+          state: {
+            session: authResponse.Session,
+            reason:"First Login",
+            username,
+            loginType: activeTabId,
+            provider: selectedProviderName,
+            author,
+            thirdLogin,
+            region: loginParam.region,
+            clientId: loginParam.clientId
+          }
+        });
+      }
+    // const command = new InitiateAuthCommand(params);  
+    // const cognitoClient = new CognitoIdentityProviderClient({
+    //   region: loginParam.region,
+    // });
+    // console.log(`cognitoClient is ${cognitoClient}`)
+    // console.log(`command is ${command}`)
+    // const { AuthenticationResult } = await cognitoClient.send(command);
+    // console.log(`AuthenticationResult is ${AuthenticationResult}`)
+    // navigate(RouterEnum.Home.path)
+    if (authResponse.AuthenticationResult) {
+      localStorage.setItem("loginType", activeTabId || '');
+      localStorage.setItem("providerName", selectedProviderName || '');
+      localStorage.setItem("userName", username || '');
+      localStorage.setItem("idToken", authResponse.AuthenticationResult.IdToken || '');
+      localStorage.setItem("accessToken", authResponse.AuthenticationResult.AccessToken || '');
+      localStorage.setItem("refreshToken", authResponse.AuthenticationResult.RefreshToken || '');
       navigate(RouterEnum.Home.path)
-      return AuthenticationResult;
+      // return authResponse.AuthenticationResult;
     }
+    // navigate(RouterEnum.Home.path)
   } catch (error) {
     if(error instanceof UserNotFoundException || error instanceof NotAuthorizedException) {
       setError(error.message)
@@ -261,11 +226,28 @@ const Login: FC = () => {
     // throw error;
   }
 }
+
+useEffect(()=>{
+  if(error!==null || error!==""){
+    setItems([{
+      header: error,
+      type: 'error',
+      content: null,
+      dismissible: true,
+      dismissLabel: "Dismiss message",
+      onDismiss: () => setItems([]),
+      id: "message_1"
+    }])
+  }
+},[error])
   
   return (
     <div className="login-div">
-      {error!=null && <div className='error'>{error}</div>}
+      {/* {error!=null && <div className='error'>{error}</div>} */}
+      {error!=null && <div className='error'><Flashbar items={items} /></div>}
+      
       <div className='container'>
+        {/* <div style={{padding:15}}> */}
         <img src={banner} alt='banner' className='banner'/>
         <div className='sub-title'>Supported by {author}</div>
         <div className='tab' style={{paddingLeft:'10%'}}>
@@ -321,11 +303,37 @@ const Login: FC = () => {
         </div>
       </Grid>)}
     </div>
+    
     </div>
-        
+    
+      
+    {/* </div> */}
+      {/* {(error!==null&&error!=='')?(
+        <div style={{color:"white",height:40,backgroundColor:"#d9151561",borderBottomLeftRadius: 8,borderBottomRightRadius: 8,marginTop:15}}><Icon name="status-negative" />{error}</div>
+      ):(
+        <div style={{height:40,borderBottomLeftRadius: 8,borderBottomRightRadius: 8,marginTop:15}} ></div>
+      )} */}
+      
       </div>
+    {/* <Flashbar items={items} /> */}
     </div>
   );
 };
 
 export default Login;
+const initiateAuth= async(clientId: string, region: string, username:string, password:string) => {
+  const params = {
+      AuthFlow: AuthFlowType.USER_PASSWORD_AUTH,
+      ClientId: clientId,
+      AuthParameters: {
+        USERNAME: username,
+        PASSWORD: password,
+      }
+  }
+  const client = new CognitoIdentityProviderClient({
+      region,
+  });
+  const command = new InitiateAuthCommand(params);
+  return await client.send(command);
+};
+

@@ -1,4 +1,4 @@
-.login-div {
+.changepwd-div {
   height: 100%;
   width: 100%;
   display: flex;
@@ -7,12 +7,12 @@
   background: linear-gradient(45deg, rgba(0, 7, 22, 1), rgb(128 128 128 / 0%));
 }
 
-.login-div .container {
+.changepwd-div .container {
   width: 600px;
   // height: 450px;
   background-color: white;
   padding: 15px;
-  padding-bottom: 45px;
+  padding-bottom: 25px;
   // box-shadow: 3px 5px 10px -5px rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   
@@ -67,8 +67,8 @@
   // border-bottom: 2px solid #0972d3;
 }
 
-.bottom-button {
-  margin-top: 20px;
+.changepwd-div .bottom-button {
+  margin-top: 35px;
   width:90%;
   // margin-left: 10%;
 }
@@ -95,4 +95,24 @@
   right: 10px;
   color: red;
   font-size: 12px;
+}
+
+.changepwd-div .awsui_button-trigger_18eso_7qpbu_97 {
+  border: 1px solid #80808061 !important;
+  border-radius: 5px !important;
+  height: 40px !important;
+}
+
+.changepwd-div .awsui_input_2rhyz_13pa9_97 {
+  border: 1px solid #80808061 !important;
+  border-radius: 5px !important;
+  height: 40px !important;
+}
+
+.changepwd-div .awsui_options-list_19gcf_qv6vk_93 li {
+  border: 1px solid #80808061 !important;
+  border-radius: 0px !important;
+}
+.item {
+  margin-bottom: 15px;
 }

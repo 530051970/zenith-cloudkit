@@ -1,4 +1,5 @@
 import Accounts from 'pages/accounts';
+import ChangePWD from 'pages/change-pwd';
 import DataGenerator from 'pages/data-generator';
 import AddStructuredData from 'pages/data-generator/AddStructuredData';
 import AddUnStructuredData from 'pages/data-generator/AddUnStructuredData';
@@ -12,7 +13,7 @@ import Templates from 'pages/templates';
 import { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 interface appRouterProps {
-  user:any
+  user:any;
 }
 const AppRouter = (props:appRouterProps) => {
   const {user} = props
@@ -23,8 +24,9 @@ const AppRouter = (props:appRouterProps) => {
         <Route path="/login" element={<Login />} />
         <Route path="/find-password" element={<FindPWD />} />
         <Route path="/create-account" element={<Register />} />
-        <Route path="/" element={user!=null?<Home />:<Home />} />
-        <Route path="/account" element={user!=null?<Accounts />:<Accounts />} />
+        <Route path="/change-password" element={<ChangePWD />} />
+        <Route path="/" element={user!=null?<Home />:<Login />} />
+        <Route path="/account" element={user!=null?<Accounts />:<Login />} />
         <Route path="/templates" element={user!=null?<Templates />:<Templates />} />
         <Route path="/data-generator" element={user!=null?<DataGenerator />:<DataGenerator />} />
         <Route path="/data-generator/gen-structured-data" element={user!=null?<AddStructuredData />:<AddStructuredData />} />

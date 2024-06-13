@@ -1,17 +1,20 @@
-import React from 'react';
-import SpaceBetween from "@cloudscape-design/components/space-between";
 import {
-    Box,
+  Box,
   Button,
   ColumnLayout,
   Container,
+  Flashbar,
   FormField,
   Header,
-  Input
+  Input,
+  ProgressBar
 } from '@cloudscape-design/components';
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import React from 'react';
 
 interface PreviewProps{
     taskName: string,
+    taskStatus: string,
     taskNameError: string,
     config: any,
     outputConfig: any,
@@ -29,7 +32,7 @@ const ValueWithLabel = ({ label, children }:{label:any, children:any}) => (
   );
   
 const Preview: React.FC<PreviewProps> = (props:PreviewProps) => {
-    const {taskName, taskNameError, config, outputConfig, customLen, setTaskName, setActiveStepIndex, setTaskNameError} = props
+    const {taskName, taskStatus, taskNameError, config, outputConfig, customLen, setTaskName, setActiveStepIndex, setTaskNameError} = props
     
     const changeTaskName = (name:string) => {
         setTaskName(name)
@@ -37,6 +40,27 @@ const Preview: React.FC<PreviewProps> = (props:PreviewProps) => {
     }
   return (
     <SpaceBetween size="xs">
+      {taskStatus==='processing'&&(<Flashbar
+      items={[
+        {
+          type: "info",
+          content: (
+            <ProgressBar
+              label="数据生成中"
+              description="根据数据量可能需要数分钟，请耐心等待或者返回首页等待"
+              value={37}
+              additionalInfo="数据库创建完成..."
+              variant="flash"
+            />
+          ),
+          dismissible: true,
+          dismissLabel: "Dismiss message",
+          // onDismiss: () => setItems([]),
+          id: "message_1"
+        }
+      ]}
+    />)}
+      
               <Container
                 header={<Header variant="h3">任务名称</Header>}
               >
@@ -99,6 +123,7 @@ const Preview: React.FC<PreviewProps> = (props:PreviewProps) => {
         </ValueWithLabel>
       </SpaceBetween>
     </ColumnLayout>
+    
                 
               </Container>
             </SpaceBetween>

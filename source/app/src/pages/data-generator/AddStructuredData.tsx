@@ -1,14 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import Wizard from "@cloudscape-design/components/wizard";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import './style.scss';
 import {
   AppLayout,
   Box,
   Button,
   CollectionPreferences,
-  ColumnLayout,
   Container,
   ContentLayout,
   DatePicker,
@@ -19,24 +13,23 @@ import {
   Input,
   Modal,
   Pagination,
-  RadioGroup,
-  Select,
   Table,
-  TextFilter,
-  Tiles,
+  TextFilter
 } from '@cloudscape-design/components';
-import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
-import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
-import { useTranslation } from 'react-i18next';
-import CustomizeFieldModal from './componments/CustomizeFieldModal';
-import { InfoLink } from 'pages/task-report/info-link';
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import Wizard from "@cloudscape-design/components/wizard";
 import HelpInfo from 'common/HelpInfo';
+import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
+import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
 import { buildDocLink } from 'ts/common';
-import { PARAM_CONFIG, OUTPUT_CONFIG, RANDOM_TYPE } from './types/field_config';
-import { set } from 'lodash';
-import Preview from './componments/Preview';
+import CustomizeFieldModal from './componments/CustomizeFieldModal';
 import Output from './componments/Output';
+import Preview from './componments/Preview';
+import './style.scss';
+import { OUTPUT_CONFIG, PARAM_CONFIG, RANDOM_TYPE } from './types/field_config';
 
 interface Field {
   name: string;
@@ -74,6 +67,9 @@ const AddStructuredData: React.FC = () => {
 const [targetRegionError, setTargetRegionError] = useState('' as string)
 const [targetServiceError, setTargetServiceError] = useState('' as string)
 const [targetInstanceError, setTargetInstanceError] = useState('' as string)
+const [targetUsernameError, setTargetUsernameError] = useState('' as string)
+const [targetPasswordError, setTargetPasswordError] = useState('' as string)
+const [targetSecretIdError, setTargetSecretIdError] = useState('' as string)
   const [showEditModal, setShowEditModal] = useState(false)
   const [changeFieldError, setChangeFieldError] = useState('' as string)
   const [prefixError, setPrefixError] = useState('' as string)
@@ -83,6 +79,7 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
   const [ver, setVer] = useState(1 as number)
   const [taskName, setTaskName] = useState('' as string)
   const [taskNameError, setTaskNameError] = useState('' as string)
+  const [taskStatus, setTaskStatus] = useState('initial' as string)
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -363,6 +360,38 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
     setVer(tmpVer)
   }
 
+  const changeCredentialType = (value:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.credentialType = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeCredentialUsername = (value:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.credentialUsername = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeCredentialPassword = (value:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.credentialPassword = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
+  const changeCredentialSecretId = (value:any) => {
+    let tmpVer = ver+1
+    let tmpConfg = outputConfig
+    tmpConfg.credentialSecretId = value
+    setOutputConfig(tmpConfg)
+    setVer(tmpVer)
+  }
+
 
 
   const saveField = () =>{
@@ -452,6 +481,7 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
         
         <ContentLayout className="generator-layout">
           
+          
     <Wizard
       i18nStrings={{
         stepNumberLabel: stepNumber =>
@@ -472,7 +502,8 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
         } else {
           setTaskNameError("")
         }
-        navigate(RouterEnum.DataGenerate.path)
+        setTaskStatus("processing")
+        // navigate(RouterEnum.DataGenerate.path)
       }}
       onNavigate={({ detail }) => {
         
@@ -854,6 +885,9 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
               targetRegionError={targetRegionError}
               targetServiceError={targetServiceError}
               targetInstanceError={targetInstanceError}
+              targetSecretIdError={targetSecretIdError}
+              targetUsernameError={targetUsernameError}
+              targetPasswordError={targetPasswordError}
               changeOutputType={changeOutputType}
               changeOutputFormat={changeOutputFormat}
               changeTargetAccount={changeTargetAccount}
@@ -861,6 +895,10 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
               changeTargetService={changeTargetService}
               changeTargetInstance={changeTargetInstance}
               changeTargetEndpoint={changeTargetEndpoint}
+              changeCredentialType={changeCredentialType}
+              changeCredentialUsername={changeCredentialUsername}
+              changeCredentialPassword={changeCredentialPassword}
+              changeCredentialSecretId={changeCredentialSecretId}
             />
           )
         },
@@ -871,6 +909,7 @@ const [targetInstanceError, setTargetInstanceError] = useState('' as string)
           content: (
             <Preview
               taskName={taskName}
+              taskStatus={taskStatus}
               taskNameError={taskNameError}
               config={config}
               outputConfig={outputConfig}

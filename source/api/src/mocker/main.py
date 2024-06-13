@@ -7,48 +7,48 @@ router = APIRouter(prefix="/mocker", tags=["mocker"])
 
 @router.post("/data_2_rds", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.RDSMocker):
+def data_2_rds(mock: schemas.RDSMocker):
     return service.gen_data_2_rds(mock)
 
 @router.post("/data_2_jdbc", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.JDBCMocker):
+def data_2_jdbc(mock: schemas.JDBCMocker):
     return service.gen_data_2_jdbc(mock)
 
 @router.post("/data_2_redshift", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.RedShiftMocker):
+def data_2_redshift(mock: schemas.RedShiftMocker):
     return service.gen_data_2_redshift(mock)
 
 @router.post("/csv_2_s3", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.CSVMocker):
+def csv_2_s3(mock: schemas.CSVMocker):
     return service.gen_csv_2_s3(mock)
 
 @router.post("/json_2_s3", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.JSONMocker):
+def json_2_s3(mock: schemas.JSONMocker):
     return service.gen_json_2_s3(mock)
 
-@router.post("/hudi_2_s3", response_model=BaseResponse)
-@inject_session
-def mocker(mock: schemas.Hudi2S3Mocker):
-    return service.gen_hudi_2_s3(mock)
+# @router.post("/hudi_2_s3", response_model=BaseResponse)
+# @inject_session
+# def hudi_2_s3(mock: schemas.Hudi2S3Mocker):
+#     return service.gen_hudi_2_s3(mock)
 
 @router.post("/csv_2_local", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.CSVMocker):
+def csv_2_local(mock: schemas.CSVMocker):
     return service.gen_csv_2_local(mock)
 
 @router.post("/json_2_local", response_model=BaseResponse)
 @inject_session
-def mocker(mock: schemas.JSONMocker):
+def json_2_local(mock: schemas.JSONMocker):
     return service.gen_json_2_local(mock)
 
-@router.post("/hudi_2_local", response_model=BaseResponse)
-@inject_session
-def mocker(mock: schemas.Hudi2S3Mocker):
-    return service.gen_hudi_2_local(mock)
+# @router.post("/hudi_2_local", response_model=BaseResponse)
+# @inject_session
+# def hudi_2_local(mock: schemas.Hudi2S3Mocker):
+#     return service.gen_hudi_2_local(mock)
 
 # {
 #   "source_bucket": "qy-test-1000logs",
