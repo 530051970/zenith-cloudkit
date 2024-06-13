@@ -11,3 +11,6 @@ cdk.out
 .DS_Store
 __pycache__
 build
+
+.vscode
+.pylintrc
