@@ -1,7 +1,7 @@
 """
 Manage constants for the API module
 """
-class Const:
+class _Const:
     """
     constants Class
     """
@@ -14,9 +14,9 @@ class Const:
         if name in self.__dict__:
             err = self.ConstError(f"Can't change const.{name}")
             raise err
-        if not name.isupper():
-            err = self.ConstError(f"Const name {name} is not all uppercase")
-            raise err
+        # if not name.isupper():
+        #     err = self.ConstError(f"Const name {name} is not all uppercase")
+        #     raise err
         self.__dict__[name] = value
     
     def __init__(self):
@@ -26,3 +26,6 @@ class Const:
         self.http_header_authorization = "Authorization"
         self.execlude_path_list = ['/', '/docs', '/openapi.json']
         self.user = "user"
+
+
+const = _Const()

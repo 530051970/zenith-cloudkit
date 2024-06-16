@@ -1,2 +1,5 @@
 [MAIN]
 source-roots=/Users/cuihubin/code/zenith-cloudkit/source/api/src
+[MESSAGES CONTROL]
+disable=missing-function-docstring
+disable=missing-module-docstring

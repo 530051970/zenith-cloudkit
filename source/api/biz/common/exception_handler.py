@@ -8,7 +8,7 @@ from .response_wrapper import resp_err
 
 import traceback
 
-logger = logging.getLogger(const.LOGGER_API)
+logger = logging.getLogger(__name__)
 
 
 def biz_exception(app: FastAPI):

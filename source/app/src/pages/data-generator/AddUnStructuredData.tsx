@@ -1,36 +1,14 @@
-import React, { useState } from 'react';
-import Wizard from "@cloudscape-design/components/wizard";
-import Tabs from '@cloudscape-design/components/tabs';
-import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import { TAB_LIST } from 'enum/common_types';
-import { useSearchParams } from 'react-router-dom';
-import format from 'date-fns/format';
-import { getExportS3Url, clearS3Object } from 'apis/data-catalog/api';
-import './style.scss';
 import {
-  AppLayout,
-  Box,
-  Button,
-  CollectionPreferences,
-  ColumnLayout,
-  Container,
-  ContentLayout,
-  FormField,
-  Header,
-  Input,
-  Pagination,
-  Table,
-  TextFilter,
+    AppLayout,
+    ContentLayout,
+    Header
 } from '@cloudscape-design/components';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
-import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
-import { alertMsg } from 'tools/tools';
-import CustomizeFieldModal from './componments/CustomizeFieldModal';
+import { useSearchParams } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
+import './style.scss';
 
 const AddUnStructuredDataHeader: React.FC = () => {
   const { t } = useTranslation();

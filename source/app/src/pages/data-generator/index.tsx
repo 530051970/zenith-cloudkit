@@ -1,40 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import Wizard from "@cloudscape-design/components/wizard";
-import Tabs from '@cloudscape-design/components/tabs';
-import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import { TAB_LIST } from 'enum/common_types';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import format from 'date-fns/format';
-import { getExportS3Url, clearS3Object } from 'apis/data-catalog/api';
-import './style.scss';
 import {
   AppLayout,
   Box,
   Button,
   Cards,
   CollectionPreferences,
-  ColumnLayout,
-  Container,
-  ContentLayout,
-  FormField,
   Header,
-  Input,
   Link,
   Pagination,
-  Table,
-  TextFilter,
+  TextFilter
 } from '@cloudscape-design/components';
+import ButtonDropdown from "@cloudscape-design/components/button-dropdown";
+import SpaceBetween from "@cloudscape-design/components/space-between";
+import { useLocalStorage } from 'common/component/useLocalStorage';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
-import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
-import { alertMsg } from 'tools/tools';
-import CustomizeFieldModal from './componments/CustomizeFieldModal';
-import { useLocalStorage } from 'common/useLocalStorage';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { RouterEnum } from 'routers/routerEnum';
 import { DEFAULT_PREFERENCES } from './generator-config';
+import './style.scss';
 
 const DataGenerateHeader: React.FC = () => {
   const { t } = useTranslation();

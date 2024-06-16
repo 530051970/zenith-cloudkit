@@ -3,7 +3,7 @@ import boto3
 import logging
 from common.constant import const
 
-logger = logging.getLogger(const.LOGGER_API)
+logger = logging.getLogger(__name__)
 caller_identity = boto3.client('sts').get_caller_identity()
 admin_account_id = caller_identity.get('Account')
 admin_region = boto3.session.Session().region_name

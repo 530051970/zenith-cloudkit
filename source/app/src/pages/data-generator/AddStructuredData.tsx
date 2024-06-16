@@ -18,7 +18,7 @@ import {
 } from '@cloudscape-design/components';
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Wizard from "@cloudscape-design/components/wizard";
-import HelpInfo from 'common/HelpInfo';
+import HelpInfo from 'common/component/HelpInfo';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

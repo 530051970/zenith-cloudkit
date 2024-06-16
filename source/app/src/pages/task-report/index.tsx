@@ -5,32 +5,23 @@ import {
   Button,
   Cards,
   CollectionPreferences,
-  Container,
-  ContentLayout,
   Header,
   Link,
   Pagination,
   SpaceBetween,
-  TextFilter,
+  TextFilter
 } from '@cloudscape-design/components';
-import { useCollection } from '@cloudscape-design/collection-hooks';
-import React, { useEffect, useRef, useState } from 'react';
 import CustomBreadCrumb from 'pages/left-menu/CustomBreadCrumb';
 import Navigation from 'pages/left-menu/Navigation';
-import { RouterEnum } from 'routers/routerEnum';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CARD_DEFINITIONS, VISIBLE_CONTENT_OPTIONS, PAGE_SIZE_OPTIONS, DEFAULT_PREFERENCES } from './report-config';
-import HelpInfo from 'common/HelpInfo';
-import { buildDocLink } from 'ts/common';
+import { RouterEnum } from 'routers/routerEnum';
+import { DEFAULT_PREFERENCES } from './report-config';
 // import {
 //   TableEmptyState,
 //   TableNoMatchState,
 // } from './common-components';
-import { useLocalStorage } from '../../common/useLocalStorage';
-import { distributionTableAriaLabels } from './table';
-import { renderAriaLive } from './pagination';
-import { FullPageHeader } from './full-page-header';
+import { useLocalStorage } from '../../common/component/useLocalStorage';
 
 
 const ReportHeader: React.FC<any> = (props:any) => {

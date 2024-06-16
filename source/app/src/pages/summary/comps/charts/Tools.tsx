@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 // import CustomLineChart from './items/CustomLineChart';
 import { getCatalogTopNData } from 'apis/dashboard/api';
-import { Props } from 'common/PropsModal';
+import { Props } from 'common/component/PropsModal';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ITableDataType, ITableListKeyValue } from 'ts/dashboard/types';
