@@ -4,13 +4,13 @@ import {
   Grid,
   Spinner,
 } from '@cloudscape-design/components';
-import React, { useEffect, useState } from 'react';
-import { CounterLink } from 'common/ConterLink';
-import HorizontalBarChart from './HorizontalBarChart';
 import { getDataCatalogSummary } from 'apis/dashboard/api';
-import { ColumnChartData, ICatalogSummary } from 'ts/dashboard/types';
-import { formatNumber, formatSize } from 'tools/tools';
+import { CounterLink } from 'common/component/ConterLink';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatNumber, formatSize } from 'tools/tools';
+import { ColumnChartData, ICatalogSummary } from 'ts/dashboard/types';
+import HorizontalBarChart from './HorizontalBarChart';
 
 const S3CatalogOverview = () => {
   const [loadingData, setLoadingData] = useState(true);

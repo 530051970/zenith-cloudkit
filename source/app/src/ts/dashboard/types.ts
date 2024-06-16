@@ -1,4 +1,4 @@
-import { Props } from 'common/PropsModal';
+import { Props } from 'common/component/PropsModal';
 
 export interface IAccountInfo {
   account_total: string | number;

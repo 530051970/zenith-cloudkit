@@ -12,7 +12,7 @@ from common.enum import MessageEnum
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from .constant import const
 
-logger = logging.getLogger(const.LOGGER_API)
+logger = logging.getLogger(__name__)
 T = TypeVar("T")
 
 
@@ -39,7 +39,7 @@ class DbWrapper:
 def resp_ok(data,
             code: int = MessageEnum.BIZ_DEFAULT_OK.get_code(),
             message: str = MessageEnum.BIZ_DEFAULT_OK.get_msg()) -> DbWrapper:
-    return DbWrapper(const.RESPONSE_SUCCESS, data, code, message)
+    return DbWrapper(const.response_success, data, code, message)
 
 
 # Be called when a exception response is returned, e.g.resp_ng（code=XXX, message=XXXXX)
@@ -48,16 +48,16 @@ def resp_err(code: int = MessageEnum.BIZ_DEFAULT_ERR.get_code(),
              ref: list = None) -> Response:
     logger.debug('END >>> RESPONSE FAILED')
     headers = {}
-    if os.getenv(const.MODE) == const.MODE_DEV:
-        headers = {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': '*',
-            'Access-Control-Allow-Methods': '*',
-            'Access-Control-Allow-Credentials': 'true'
-        }
+    # if os.getenv(const.MODE) == const.MODE_DEV:
+    #     headers = {
+    #         'Access-Control-Allow-Origin': '*',
+    #         'Access-Control-Allow-Headers': '*',
+    #         'Access-Control-Allow-Methods': '*',
+    #         'Access-Control-Allow-Credentials': 'true'
+    #     }
     return JSONResponse(
         content={
-            'status': const.RESPONSE_FAIL,  # success|fail
+            'status': const.response_fail,  # success|fail
             'code': code,
             'message': message,
             'ref': ref,

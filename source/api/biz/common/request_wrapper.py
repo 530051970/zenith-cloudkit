@@ -10,7 +10,7 @@ import logging
 from common.response_wrapper import resp_ok
 from fastapi_pagination.bases import RawParams
 
-logger = logging.getLogger(const.LOGGER_API)
+logger = logging.getLogger(__name__)
 
 
 def to_raw_params(self) -> RawParams:
