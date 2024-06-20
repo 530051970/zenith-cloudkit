@@ -1,18 +1,23 @@
 import * as cdk from 'aws-cdk-lib';
-import { Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { CustomResource, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import { AuthorizationType, LambdaIntegration, RestApi, TokenAuthorizer } from 'aws-cdk-lib/aws-apigateway';
 import { AllowedMethods, Distribution, OriginAccessIdentity, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
-import { AccountRecovery, AdvancedSecurityMode, CfnUserPoolUser, UserPool, UserPoolClient, VerificationEmailStyle } from 'aws-cdk-lib/aws-cognito';
+import { UserPool } from 'aws-cdk-lib/aws-cognito';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { CanonicalUserPrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Code, DockerImageCode, DockerImageFunction, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { BlockPublicAccess, Bucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
+import { Provider } from 'aws-cdk-lib/custom-resources';
 import { execSync } from 'child_process';
 import { Construct } from 'constructs';
+import { Cognito } from './cognito';
 import { SolutionInfo } from './constant';
-import { createZenithCloudkitParameters } from './parameter';
+import { Network } from './network';
+import { createCognitoParameters } from './parameter';
+import { Rds } from './rds';
+import { creatDescribeSubnetsRole } from './roles';
 import path = require('path');
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
@@ -79,109 +84,54 @@ export class ZenithCloudkitStack extends Stack {
       destinationBucket: websiteBucket,
     });
 
-    // Create a Cognito User Pool
-    this.userPool = new UserPool(this, `${SolutionInfo.SOLUTION_SHORT_NAME}UserPool`, {
-      selfSignUpEnabled: true,
-      signInAliases: { username: true },
-      signInCaseSensitive: false,
-      accountRecovery: AccountRecovery.EMAIL_ONLY,
-      removalPolicy: RemovalPolicy.DESTROY,
-      userVerification: {
-        emailStyle: VerificationEmailStyle.LINK,
-      },
-      advancedSecurityMode: AdvancedSecurityMode.ENFORCED,
-      passwordPolicy: {
-        minLength: 8,
-        requireUppercase: true,
-        requireDigits: true,
-        requireSymbols: true,
+    const cognito = new Cognito(this, 'Cognito', {
+      inputParams: createCognitoParameters(this)
+    })
+
+    // Lookup the default VPC
+    const defaultVpc = Vpc.fromLookup(this, 'DefaultVpc', {
+      isDefault: true,
+    });
+
+    const describeSubnetsLambda = new Function(this, 'DescribeSubnetsFunction', {
+      runtime: Runtime.PYTHON_3_9,
+      code: Code.fromAsset('source/api/biz/lambda/calcCidrBlocks'),
+      handler: 'main.handler',
+      role: creatDescribeSubnetsRole(this)
+      }
+    )
+    const describeSubnetsProvider = new Provider(this, 'DescribeSubnetsProvider', {
+      onEventHandler: describeSubnetsLambda,
+    });
+
+    const describeSubnetsResource = new CustomResource(this, 'DescribeSubnetsResource', {
+      serviceToken: describeSubnetsProvider.serviceToken,
+      properties: {
+        VpcId: defaultVpc.vpcId,
       },
     });
 
-    // Create a Cognito App Client
-    const userPoolClient = new UserPoolClient(this, `${SolutionInfo.SOLUTION_SHORT_NAME}UserPoolClient`, {
-      userPool:this.userPool,
-      generateSecret: false, // Optional: Set to true if you need a client secret
+    const network = new Network(this, 'Network', {
+      vpc: defaultVpc,
+      cidrBlock: describeSubnetsResource.getAttString('NextCidrBlock'),
+      nextCidrBlock: describeSubnetsResource.getAttString('NextNextCidrBlock')
     });
 
-    const parameters = createZenithCloudkitParameters(this)
-
-    // Add initialUser
-    const initialUserName = parameters.params.initialUserName;
-    const initialUserEmail = parameters.params.initialUserEmail;
-    const initialPassword = parameters.params.initialPassword;
-    new CfnUserPoolUser(this, 'AdminUser', {
-      userPoolId: this.userPool.userPoolId,
-      username: initialUserName,
-      desiredDeliveryMediums: ['EMAIL'],
-      forceAliasCreation: false,
-      messageAction: 'SUPPRESS',
-      userAttributes: [
-        {
-          name: 'email',
-          value: initialUserEmail,
-        },
-        {
-          name: 'email_verified',
-          value: 'true',
-        },
-      ],
+    const rds = new Rds(this, 'RDS', {
+      vpc: defaultVpc,
+      privateSubnets: defaultVpc.privateSubnets
     });
 
-    new AwsCustomResource(
-      this,
-      'AwsCustomResource-ForcePassword',
-      {
-        onCreate: {
-          service: 'CognitoIdentityServiceProvider',
-          action: 'adminSetUserPassword',
-          parameters: {
-            UserPoolId: this.userPool.userPoolId,
-            Username: 'cuihubin@amazon.com',
-            Password: initialPassword,
-            Permanent: true,
-          },
-          physicalResourceId: PhysicalResourceId.of(
-            `AwsCustomResource-ForcePassword-${initialUserName}`,
-          ),
-        },
-        policy: AwsCustomResourcePolicy.fromSdkCalls({
-          resources: AwsCustomResourcePolicy.ANY_RESOURCE,
-        }),
-        installLatestAwsSdk: true,
-      },
-    );
-
-    // // Create a Lambda function to create the admin user
-    // const createAdminUserLambda = new Function(this, 'CreateAdminUserLambda', {
-    //   runtime: lambda.Runtime.NODEJS_14_X,
-    //   handler: 'index.handler',
-    //   code: lambda.Code.fromAsset(path.join(__dirname, '../lambda')),
-    //   environment: {
-    //     USER_POOL_ID: userPool.userPoolId,
-    //     ADMIN_EMAIL: 'admin@example.com',  // Replace with your admin email
-    //     ADMIN_PASSWORD: 'Admin1234!',      // Replace with your admin password (should comply with password policy)
-    //   },
-    // });
-
-    // // Grant the Lambda function permissions to administer the User Pool
-    // userPool.grantAdminCreateUser(createAdminUserLambda);
-    // userPool.grant(createAdminUserLambda, 'cognito-idp:AdminAddUserToGroup');
-
-    // // Create a custom resource to trigger the Lambda function after the User Pool is created
-    // const provider = new cr.Provider(this, 'CreateAdminUserProvider', {
-    //   onEventHandler: createAdminUserLambda,
-    // });
-
-    // new cdk.CustomResource(this, 'CreateAdminUserResource', { 
-    //   serviceToken: provider.serviceToken 
-    // });
+    // rds.addDependency(network)
+    rds.node.addDependency(network);
 
     const apiFunction = new DockerImageFunction(this, 'APIFunction', {
       code: DockerImageCode.fromImageAsset('source/api/biz'),
+      vpc: defaultVpc,
+      securityGroups: [rds.clientSecurityGroup],
       environment: {
-        userPoolId: this.userPool.userPoolId,
-        userPoolClientId: userPoolClient.userPoolClientId
+        userPoolId: cognito.userPool.userPoolId,
+        userPoolClientId: cognito.userPoolClient.userPoolClientId
       }
     });
 
@@ -189,15 +139,13 @@ export class ZenithCloudkitStack extends Stack {
       functionName: 'AuthFunction',
       description: `${SolutionInfo.SOLUTION_FULL_NAME}AuthFunction`,
       runtime: Runtime.PYTHON_3_9,
-      handler: 'auth.main.handler',
+      handler: 'main.handler',
       code: Code.fromAsset(path.join(__dirname, '../source/api/auth'), { exclude: ['venv', 'pytest'] }),
       memorySize: 3008,
       timeout: Duration.seconds(20),
-      // role: this.apiRole,
-      // layers: [this.apiLayer],
       environment: {
-        userPoolId: this.userPool.userPoolId,
-        userPoolClientId: userPoolClient.userPoolClientId
+        userPoolId: cognito.userPool.userPoolId,
+        userPoolClientId: cognito.userPoolClient.userPoolClientId
       }
     });
 
@@ -236,6 +184,9 @@ export class ZenithCloudkitStack extends Stack {
     authApi.addMethod('GET', authIntegration, {
       authorizationType: AuthorizationType.NONE,
     });
+    
+    
+
     new cdk.CfnOutput(this, 'portURL', {
       value: distribution.distributionDomainName,
     });

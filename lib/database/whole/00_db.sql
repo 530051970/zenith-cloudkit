@@ -1,0 +1,1 @@
+alter database cloudkit default character set utf8mb4;

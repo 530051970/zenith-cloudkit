@@ -2,20 +2,20 @@ import { CfnParameter } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 
-export interface ZenithCloudKitProps {
+export interface CognitoProps {
   readonly initialUserName: string;
   readonly initialUserEmail: string;
   readonly initialPassword: string;
 
 }
 
-export function createZenithCloudkitParameters(scope: Construct): {
+export function createCognitoParameters(scope: Construct): {
   metadata: {
     [key: string]: any;
   };
-  params: ZenithCloudKitProps;
+  params: CognitoProps;
 } {
-  const zenithCloukKitParamsGroup = [];
+  const CognitoParamsGroup = [];
 
   const initialUserNameParam = new CfnParameter(scope, 'InitialUserName', {
     description: 'Initial user name.',
@@ -37,7 +37,7 @@ export function createZenithCloudkitParameters(scope: Construct): {
     type: 'String',
   });
 
-  zenithCloukKitParamsGroup.push({
+  CognitoParamsGroup.push({
     Label: { default: 'Initial User Information' },
     Parameters: [
       initialUserNameParam.logicalId,
@@ -69,7 +69,7 @@ export function createZenithCloudkitParameters(scope: Construct): {
   const metadata = {
     'AWS::CloudFormation::Interface': {
       ParameterGroups: [
-        ...zenithCloukKitParamsGroup,
+        ...CognitoParamsGroup,
       ],
       ParameterLabels: {
         ...initialUserNameParamLabels,

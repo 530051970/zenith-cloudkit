@@ -261,7 +261,6 @@ const DataGenerator: React.FC = () => {
 
 
   const showCustomizeModal = () => {
-    console.log("show!!!");
     setShowModal(true);
     return;
   };
