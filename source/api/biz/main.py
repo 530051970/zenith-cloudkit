@@ -5,6 +5,7 @@ from mangum import Mangum
 from fastapi_pagination import add_pagination
 from mocker.main import router as mocker_router
 from bot.main import router as bot_router
+from user.main import router as user_router
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ async def root():
 
 app.include_router(mocker_router)
 app.include_router(bot_router)
+app.include_router(user_router)
 
 handler = Mangum(app)
 add_pagination(app)

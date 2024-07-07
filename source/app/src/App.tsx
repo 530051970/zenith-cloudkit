@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import AppRouter from 'routers';
 
+import { Spinner } from '@cloudscape-design/components';
 import { Constant } from 'common/constants';
 import NoAccess from 'pages/no-access';
 import PageSpinner from 'pages/page-spinner';
@@ -22,6 +23,7 @@ import './index.scss';
 const AppBody = ({ signOut, path }:{signOut:any, path:string}) => {
   const [user, setUser] = useState(null as any)
   const navigate = useNavigate()
+  const [isLoading, setIsloading] = useState(true)
   useEffect(() => {
     const pathName = window.location.href
     const lastIndex=pathName.lastIndexOf('/')
@@ -43,6 +45,7 @@ const AppBody = ({ signOut, path }:{signOut:any, path:string}) => {
       // })
       setUser({userName:"dummy"})
     }
+    setIsloading(false)
     // const loginType = localStorage.getItem("loginType")
     // const providerName = localStorage.getItem("providerName")
     // const userName = localStorage.getItem("userName")
@@ -56,14 +59,22 @@ const AppBody = ({ signOut, path }:{signOut:any, path:string}) => {
     //   userName: localStorage.getItem("userName")
     // })
   }, []);
-
+  
+  if(isLoading){
+    return (
+      <div className="page-loading">
+        <Spinner />
+      </div>
+    )
+  }
   return (
-        <>
+          <>
           <AppRouter user={user}/>
           <CommonAlert />
           <PageSpinner />
-        </>
-  );
+        </>)
+        
+  
 };
 
 const App: React.FC = () => {

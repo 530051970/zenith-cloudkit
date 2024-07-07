@@ -89,10 +89,12 @@ const Register: FC = () => {
     
   }
 
-  
+  const registerAccount = ()=>{
+    setError("hahaha")
+  }
+
   return (
     <div className="register-div">
-      {error!=null && <div className='error'>{error}</div>}
       <div className='container'>
         <img src={banner} alt='banner' className='banner'/>
         <div className='sub-title'>Supported by {author}</div>
@@ -128,11 +130,12 @@ const Register: FC = () => {
                   />
                 </FormField>
               </div>):((selectedLoginType==='oidc')?(<div style={{marginTop:15}}>
+                <SpaceBetween size='s' direction='vertical'>
                 <FormField
                   description="Please choose one OIDC provider..."
                   label="OIDC Provider"
                 >
-                  <div className='item'>
+                  {/* <div className='item'> */}
                     <Select
                       placeholder='Please choose one OIDC provider'
                       selectedOption={oidcProvider}
@@ -141,10 +144,22 @@ const Register: FC = () => {
                       }
                       options={oidcOptions}
                     />
-                  </div>
+                  {/* </div> */}
                 </FormField>
-    <FormField
-      description="Please enter a email, we will send a password reset email to this address..."
+                <Grid gridDefinition={[{colspan:5},{colspan:7}]} >
+                <FormField
+      description="You can use username to login."
+      label="Username"
+    >
+      <Input
+        value={email}
+        placeholder='eg: Peter'
+        onChange={event =>
+          setEmail(event.detail.value)
+        }
+      />
+    </FormField><FormField
+      description="We will send a password to this email..."
       label="Email"
     >
       <Input
@@ -154,13 +169,15 @@ const Register: FC = () => {
           setEmail(event.detail.value)
         }
       />
-    </FormField>
+    </FormField>      
+                </Grid></SpaceBetween>
+    
               </div>):(<>
               </>))}
           </div>
         </div>
         <div className='bottom-button'>
-          <Button variant="primary" className='login-buttom' onClick={()=>{}}>Next</Button>
+          <Button variant="primary" className='login-buttom' onClick={()=>registerAccount()}>Register</Button>
         </div>
         <div style={{color: 'rgb(128, 128, 128)', fontSize: 14,marginTop: 30, width:'90%'}}>
           {(thirdLogin && thirdLogin.length>0)?(
@@ -184,6 +201,7 @@ const Register: FC = () => {
               <Link onFollow={toLogin}>Login</Link>
             </div>
           </Grid>)}
+          <div style={{marginTop:10,textAlign:'right',color:'red',fontWeight:800,height:16}}>{error}</div>
         </div>
       </div>   
     </div>

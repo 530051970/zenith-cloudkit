@@ -2,5 +2,5 @@
     "python.pythonPath": "${workspaceFolder}/venv/bin/python",
     "python.analysis.extraPaths": ["${workspaceFolder}/base_dir"],
     "python.envFile": "${workspaceFolder}/.env",
-    "terminal.integrated.cwd": "${workspaceFolder}/source/api/src"
+    "terminal.integrated.cwd": "${workspaceFolder}/source/api"
 }

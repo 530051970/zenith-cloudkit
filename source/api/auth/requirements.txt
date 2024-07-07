@@ -1,0 +1,6 @@
+fastapi==0.109.1
+uvicorn==0.23.2
+boto3==1.28.75
+mangum==0.17.0
+python-jose==3.3.0
+requests==2.32.3

@@ -1,5 +1,5 @@
 import { AuthFlowType, CognitoIdentityProviderClient, InitiateAuthCommand, NotAuthorizedException, UserNotFoundException } from '@aws-sdk/client-cognito-identity-provider';
-import { Button, Checkbox, Flashbar, Grid, Link, SpaceBetween, Tabs } from '@cloudscape-design/components';
+import { Button, Checkbox, Flashbar, Grid, Link, SpaceBetween, Spinner, Tabs } from '@cloudscape-design/components';
 import banner from 'banner.png';
 import { LOGIN_TYPE } from 'enum/common_types';
 import { FC, useEffect, useState } from 'react';
@@ -17,7 +17,7 @@ const Login: FC = () => {
   const [password, setPassword] = useState(null as any);
   const [keep, setKeep] = useState(false);
   const navigate = useNavigate();
-  const [error, setError] = useState(null as any);
+  const [error, setError] = useState("" as string);
   const [config, setConfig]=useState(null as any);
   const [selectedProvider, setSelectedProvider] = useState(null as any);
   const [selectedProviderName, setSelectedProviderName] = useState(null as any);
@@ -25,8 +25,9 @@ const Login: FC = () => {
   const [tabs, setTabs] = useState([] as any[]);
   const [thirdLogin, setThirdLogin] = useState([] as any[]);
   const [author, setAuthor] = useState("" as string)
+  const [version, setVersion] = useState(0)
   const [loginParams, setLoginParams] = useState(null as any);
-  const [items, setItems] = useState([] as any[]);
+  const [isLoading, setIsloading] = useState(true)
 
   useEffect(()=>{
     console.log("=====login.tsx")
@@ -37,6 +38,7 @@ const Login: FC = () => {
     }
     loadConfig().then(configData =>{
       setConfig(configData)
+      setIsloading(false)
     })
   },[])
 
@@ -124,17 +126,21 @@ const Login: FC = () => {
   }
 
   const login = () => {
-    console.log("selectedProvider is:"+selectedProvider.value)
+    const ver = version
+    // console.log("selectedProvider is:"+selectedProvider.value)
     if(activeTabId === LOGIN_TYPE.OIDC && selectedProvider == null){
-      setError("Kind reminder: provideId is required")
+      setError("provideId is required")
+      setVersion(ver + 1)
       return false;
     }
     if(username == null){
-      setError("Kind reminder: username is required")
+      setError("username is required")
+      setVersion(ver + 1)
       return false;
     }
     if(password == null){
-      setError("Kind reminder: password is required")
+      setError("password is required")
+      setVersion(ver + 1)
       return false;
     }
 
@@ -212,6 +218,7 @@ const Login: FC = () => {
       localStorage.setItem("idToken", authResponse.AuthenticationResult.IdToken || '');
       localStorage.setItem("accessToken", authResponse.AuthenticationResult.AccessToken || '');
       localStorage.setItem("refreshToken", authResponse.AuthenticationResult.RefreshToken || '');
+      localStorage.setItem("session", authResponse.Session || '');
       navigate(RouterEnum.Home.path)
       // return authResponse.AuthenticationResult;
     }
@@ -227,25 +234,29 @@ const Login: FC = () => {
   }
 }
 
-useEffect(()=>{
-  if(error!==null || error!==""){
-    setItems([{
-      header: error,
-      type: 'error',
-      content: null,
-      dismissible: true,
-      dismissLabel: "Dismiss message",
-      onDismiss: () => setItems([]),
-      id: "message_1"
-    }])
+// useEffect(()=>{
+//   if(error!==null || error!==""){
+//     setItems([{
+//       header: error,
+//       type: 'error',
+//       content: null,
+//       dismissible: true,
+//       dismissLabel: "Dismiss message",
+//       onDismiss: () => setItems([]),
+//       id: "message_1"
+//     }])
+//   }
+// },[error])
+  
+  if(isLoading){
+    return (
+      <Spinner/>
+    )
   }
-},[error])
   
   return (
     <div className="login-div">
-      {/* {error!=null && <div className='error'>{error}</div>} */}
-      {error!=null && <div className='error'><Flashbar items={items} /></div>}
-      
+      {/* {error!=null && <div className='error'>{error}</div>} */}      
       <div className='container'>
         {/* <div style={{padding:15}}> */}
         <img src={banner} alt='banner' className='banner'/>
@@ -301,7 +312,9 @@ useEffect(()=>{
           <span style={{color: 'rgb(128, 128, 128)'}}>Don't have an account? </span>
           <Link onFollow={toRegister}>Register</Link>
         </div>
+        <div style={{display:"none"}}>{version}</div>
       </Grid>)}
+      <div style={{marginTop:10,textAlign:'right',color:'red',fontWeight:800,height:16}}>{error}</div>
     </div>
     
     </div>

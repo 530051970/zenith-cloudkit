@@ -5,6 +5,7 @@ import { ChallengeNameType, CognitoIdentityProviderClient, RespondToAuthChalleng
 import { FC, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RouterEnum } from 'routers/routerEnum';
+import yaml from 'yaml';
 import './style.scss';
 
 const ChangePWD: FC = () => {
@@ -19,7 +20,65 @@ const ChangePWD: FC = () => {
   // const [thirdLogin, setThirdLogin] = useState([] as any[]);
   // const [author, setAuthor] =useState("" as string)
   const [items, setItems] = useState([] as any[]);
-  const { session, username, reason, loginType, provider, author, thirdLogin, region, clientId } = location.state || {}
+  const [config, setConfig]=useState(null as any);
+  const [isLoading, setIsloading] = useState(true)
+  const [params, setParams] = useState({
+    session: location.state?.session,
+    username: location.state?.username,
+    reason: location.state?.reason,
+    loginType: location.state?.loginType,
+    provider: location.state?.provider,
+    author: location.state?.author,
+    thirdLogin: location.state?.thirdLogin,
+    region: location.state?.region,
+    clientId: location.state?.clientId
+  } as any)
+  // let { session, username, reason, loginType, provider, author, thirdLogin, region, clientId } = location.state || {}
+
+
+  useEffect(()=>{
+    setIsloading(true)
+    if(params.provider == undefined){
+      const loadConfig = async ()=> {
+        let response = await fetch('/config.yaml')
+        let data = await response.text()
+        return yaml.parse(data);
+      }
+      loadConfig().then(configData =>{
+        // setConfig(configData)
+        // session = localStorage.getItem("session")
+        // username = localStorage.getItem("userName")
+        // loginType = localStorage.getItem("loginType")
+        // provider = localStorage.getItem("providerName")
+        // author = configData.author
+        let thirdLogin, region, clientId = null
+        if(configData.login.third && configData.login.third.length > 0){
+          // const tmp_login_params = new Map<string, any>();
+          thirdLogin = configData.login.third
+          configData.login.oidc.providers.forEach((item:any)=>{
+            if(item.name === "Cognito"){
+              region = item.region
+              clientId = item.clientId
+              return 
+            }
+            // tmp_login_params.set(item.name, item)
+          })
+        }
+        setParams({
+          session: localStorage.getItem("session"),
+          username: localStorage.getItem("userName"),
+          reason: "by user",
+          loginType: localStorage.getItem("loginType"),
+          provider: localStorage.getItem("loginType"),
+          author:  configData.author,
+          thirdLogin: configData.login.third,
+          region,
+          clientId
+        })
+        setIsloading(false)
+      })
+    }
+  },[])
   
   // useEffect(()=>{
   //   let tmp_login_type: any[] =[]
@@ -121,7 +180,7 @@ const ChangePWD: FC = () => {
       return
     }
     try {
-      const response = await respondToNewPasswordChallenge(session, region, clientId, username, newPass);
+      const response = await respondToNewPasswordChallenge(params.session, params.region, params.clientId, params.username, newPass);
       console.log(response);
   } catch (error) {
       console.log(error)
@@ -150,10 +209,10 @@ useEffect(()=>{
       {error!=null && <div className='error'><Flashbar items={items} /></div>}
       <div className='container'>
         <img src={banner} alt='banner' className='banner'/>
-        <div className='sub-title'>Supported by {author}</div>
+        <div className='sub-title'>Supported by {params.author}</div>
         <div className='tab' style={{paddingLeft:'10%'}}>
           <div style={{height:270,width:'90%'}}>
-          <div style={{color:"#000000a6",fontSize:18, fontWeight:800, marginBottom:20}}>Change Password <span style={{fontSize:12, fontWeight:500}}>({reason})</span></div>
+          <div style={{color:"#000000a6",fontSize:18, fontWeight:800, marginBottom:20}}>Change Password <span style={{fontSize:12, fontWeight:500}}>({params.reason})</span></div>
           <div style={{width:'100%'}}>
             <Grid gridDefinition={[{colspan:6},{colspan:6}]}>
               {/* {loginType.map(item=>(<div>
@@ -171,19 +230,20 @@ useEffect(()=>{
                   description=""
                   label="Login Type"
                 >
-                 {loginType==='oidc'?"OIDC":(loginType==='user'?"Username/Password":"SNS")} - {provider}
+                 {params.loginType==='oidc'?"OIDC":(params.loginType==='user'?"Username/Password":"SNS")} - {params.provider}
               </FormField>
               <FormField
                   description=""
                   label="Current User"
                 >
-                 {username}
+                 {params.username}
               </FormField>
             </Grid>
             {(<div style={{marginTop:15}}>
+              <SpaceBetween size={'m'} direction='vertical'>
                 <FormField
                   description="Please input new password..."
-                  label="Password"
+                  label="New Password"
                   errorText={error}
                 >
                   
@@ -196,7 +256,7 @@ useEffect(()=>{
                 </FormField>
     <FormField
       description="Please enter a email, we will send a password reset email to this address..."
-      label="Confirm Password"
+      label="Confirm New Password"
       errorText={confirmPassError}
 
     >
@@ -207,7 +267,7 @@ useEffect(()=>{
           changeConfirmPass(event.detail.value)
         }
       />
-    </FormField>
+    </FormField></SpaceBetween>
               </div>)}
           </div>
         </div>
@@ -215,10 +275,10 @@ useEffect(()=>{
           <Button variant="primary" className='login-buttom' onClick={()=>changePWD()}>Submit</Button>
         </div>
         <div style={{color: 'rgb(128, 128, 128)', fontSize: 14,marginTop: 30, width:'90%'}}>
-          {(thirdLogin && thirdLogin.length>0)?(
+          {(params.thirdLogin && params.thirdLogin.length>0)?(
           <Grid gridDefinition={[{colspan:4},{colspan:8}]}>
             <SpaceBetween direction='horizontal' size='s'>
-              {thirdLogin.map((item:any)=>{
+              {params.thirdLogin.map((item:any)=>{
                 return (<div key={item.type} onMouseEnter={()=>handleMouseEnter(item.type)} onMouseLeave={()=>handleMouseLeave(item.type)}>
                           <img src={selectedThird===item.type? `../imgs/${item.iconUrlSelected}.png`:`../imgs/${item.iconUrl}.png`} alt="" style={item.iconStyle}/>
                         </div>)
@@ -240,6 +300,7 @@ useEffect(()=>{
               <Link onFollow={toLogin}>Login</Link>
             </div>
           </Grid>)}
+          <div style={{marginTop:10,textAlign:'right',color:'red',fontWeight:800,height:16}}>{error}</div>
         </div>
       </div>   
     </div>

@@ -138,9 +138,15 @@ code {
 //   width: calc(100vw - 300px);
 // }
 
+// .page-loading {
+//   text-align: center;
+//   padding: 20px;
+// }
+
 .page-loading {
-  text-align: center;
-  padding: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 80px;
 }
 
 .wrap-line {
