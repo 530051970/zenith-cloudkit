@@ -21,6 +21,7 @@
     "typescript": "~5.4.5"
   },
   "dependencies": {
+    "@aws-cdk/aws-apigatewayv2-integrations": "^1.204.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.588.0",
     "@aws-sdk/client-ec2": "^3.598.0",
     "aws-cdk-lib": "2.140.0",

@@ -3,6 +3,7 @@ login:
   user: 
     label: "Username"
     value: "username"
+    disabled: true
   sns: 
     label: "SNS Code"
     value: "sns"

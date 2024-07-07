@@ -1,6 +1,6 @@
 import * as cdk from 'aws-cdk-lib';
-import { CustomResource, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
-import { AuthorizationType, LambdaIntegration, RestApi, TokenAuthorizer } from 'aws-cdk-lib/aws-apigateway';
+import { CustomResource, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import { LambdaIntegration, MethodLoggingLevel, RestApi, TokenAuthorizer } from 'aws-cdk-lib/aws-apigateway';
 import { AllowedMethods, Distribution, OriginAccessIdentity, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
@@ -17,24 +17,16 @@ import { SolutionInfo } from './constant';
 import { Network } from './network';
 import { createCognitoParameters } from './parameter';
 import { Rds } from './rds';
-import { creatDescribeSubnetsRole } from './roles';
+import { creatLambdaRole } from './roles';
 import path = require('path');
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import apigateway = require('aws-sdk/clients/apigateway');
 
 export interface ApiProps {
-  // readonly vpc: IVpc;
   readonly bucketName: string;
-  // readonly rdsClientSecurityGroup: SecurityGroup;
-  // readonly customDBSecurityGroup: SecurityGroup;
-  // readonly oidcIssuer: string;
-  // readonly oidcClientId: string;
 }
 export class ZenithCloudkitStack extends Stack {
   readonly apiFunction: Function;
   readonly userPool?: UserPool
-  // private apiRole: Role;
-  // private apiLayer: LayerVersion;
-  // private code: AssetCode;
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
     
@@ -44,11 +36,6 @@ export class ZenithCloudkitStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY,
       autoDeleteObjects: true
     });
-    // this.apiRole = this.createRole();
-    // this.apiLayer = this.createLayer();
-    // this.code = Code.fromAsset(path.join(__dirname, '../source/api/src'), { exclude: ['venv', 'pytest'] });
-
-    // this.apiFunction = this.createFunction('API', 'main.handler', 900);
   
     // Grant access to CloudFront
     const cloudfrontOAI = new OriginAccessIdentity(this, 'CloudFront-OAI', {
@@ -93,11 +80,13 @@ export class ZenithCloudkitStack extends Stack {
       isDefault: true,
     });
 
+    const lambdaRole = creatLambdaRole(this)
+
     const describeSubnetsLambda = new Function(this, 'DescribeSubnetsFunction', {
       runtime: Runtime.PYTHON_3_9,
-      code: Code.fromAsset('source/api/biz/lambda/calcCidrBlocks'),
+      code: Code.fromAsset(path.join(__dirname, '../source/api/lambda/calcCidrBlocks')),
       handler: 'main.handler',
-      role: creatDescribeSubnetsRole(this)
+      role: lambdaRole
       }
     )
     const describeSubnetsProvider = new Provider(this, 'DescribeSubnetsProvider', {
@@ -122,56 +111,44 @@ export class ZenithCloudkitStack extends Stack {
       privateSubnets: defaultVpc.privateSubnets
     });
 
-    // rds.addDependency(network)
     rds.node.addDependency(network);
 
     const apiFunction = new DockerImageFunction(this, 'APIFunction', {
       code: DockerImageCode.fromImageAsset('source/api/biz'),
       vpc: defaultVpc,
       securityGroups: [rds.clientSecurityGroup],
+      role: lambdaRole,
       environment: {
         userPoolId: cognito.userPool.userPoolId,
         userPoolClientId: cognito.userPoolClient.userPoolClientId
       }
     });
 
-    const authFunction = new Function(this, 'AuthFunction', {
-      functionName: 'AuthFunction',
-      description: `${SolutionInfo.SOLUTION_FULL_NAME}AuthFunction`,
-      runtime: Runtime.PYTHON_3_9,
-      handler: 'main.handler',
-      code: Code.fromAsset(path.join(__dirname, '../source/api/auth'), { exclude: ['venv', 'pytest'] }),
-      memorySize: 3008,
-      timeout: Duration.seconds(20),
-      environment: {
-        userPoolId: cognito.userPool.userPoolId,
-        userPoolClientId: cognito.userPoolClient.userPoolClientId
-      }
-    });
-
-    // 创建 HTTP API Gateway
     const gateway = new RestApi(this, `${SolutionInfo.SOLUTION_SHORT_NAME}Api`, {
       restApiName: `${SolutionInfo.SOLUTION_SHORT_NAME}Api`,
       description: `${SolutionInfo.SOLUTION_SHORT_NAME}Api`,
       deployOptions:{
-        stageName: 'dev'
+        stageName: 'dev',
+        loggingLevel: MethodLoggingLevel.INFO,
+        dataTraceEnabled: true,
+        metricsEnabled: true
       }
     });
 
     const apiIntegration = new LambdaIntegration(apiFunction);
-    const authIntegration = new LambdaIntegration(authFunction);
 
     const api = gateway.root.addResource('api');
-    const authApi = gateway.root.addResource('auth');
 
-    // 创建Lambda Authorizer函数
-    const authorizerFunction = new Function(this, 'AuthorizerFunction', {
+    const authorizerFunction = new Function(this, 'NEWAuthorizerFunction', {
       runtime: Runtime.PYTHON_3_9,
-      code: Code.fromAsset('source/api/biz/lambda/authorizer'),
+      code: Code.fromAsset(path.join(__dirname, '../source/api/lambda/authorizer')),
       handler: 'main.handler',
+      role: lambdaRole,
+      environment: {
+        LOG_LEVEL: 'info'
+      }
     });
 
-    // 创建Lambda Authorizer
     const authorizer = new TokenAuthorizer(this, 'MyAuthorizer', {
       handler: authorizerFunction,
     });
@@ -181,11 +158,6 @@ export class ZenithCloudkitStack extends Stack {
     api.addMethod('POST', apiIntegration, {
       authorizer,
     });
-    authApi.addMethod('GET', authIntegration, {
-      authorizationType: AuthorizationType.NONE,
-    });
-    
-    
 
     new cdk.CfnOutput(this, 'portURL', {
       value: distribution.distributionDomainName,

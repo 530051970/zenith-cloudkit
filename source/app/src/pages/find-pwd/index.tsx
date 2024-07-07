@@ -15,7 +15,7 @@ const FindPWD: FC = () => {
   const [selectedLoginType, setSelectedLoginType] = useState("oidc" as string);
   const [thirdLogin, setThirdLogin] = useState([] as any[]);
   const [author, setAuthor] =useState("" as string)
-  const [email, setEmail] =useState("" as string)
+  const [username, setUsername] =useState("" as string)
   const [oidcProvider, setOidcProvider] =useState(null as any)
   const [oidcOptions, setOidcOptions] = useState([] as any[]);
   
@@ -94,7 +94,6 @@ const FindPWD: FC = () => {
   
   return (
     <div className="pwd-div">
-      {error!=null && <div className='error'>{error}</div>}
       <div className='container'>
         <img src={banner} alt='banner' className='banner'/>
         <div className='sub-title'>Supported by {author}</div>
@@ -122,10 +121,10 @@ const FindPWD: FC = () => {
                   label="Email"
                 >
                   <Input
-                    value={email}
-                    placeholder='eg: developer@cloud.com'
+                    value={username}
+                    placeholder='eg: Peter'
                     onChange={event =>
-                      setEmail(event.detail.value)
+                      setUsername(event.detail.value)
                     }
                   />
                 </FormField>
@@ -146,14 +145,14 @@ const FindPWD: FC = () => {
                   </div>
                 </FormField>
     <FormField
-      description="Please enter a email, we will send a password reset email to this address..."
-      label="Email"
+      description="We will send an email to the email address associated with this user."
+      label="Username"
     >
       <Input
-        value={email}
-        placeholder='eg: developer@cloud.com'
+        value={username}
+        placeholder='eg: Peter'
         onChange={event =>
-          setEmail(event.detail.value)
+          setUsername(event.detail.value)
         }
       />
     </FormField>
@@ -190,6 +189,7 @@ const FindPWD: FC = () => {
               <Link onFollow={toLogin}>Login</Link>
             </div>
           </Grid>)}
+          <div style={{marginTop:10,textAlign:'right',color:'red',fontWeight:800,height:16}}>{error}</div>
         </div>
       </div>   
     </div>
